@@ -41,7 +41,7 @@ More examples
         field = pymarc.Field('001', data='12345')
         record.add_field(field)
 
-        # w/ SlimRecord
+        # w/ FatRecord
         record.add('001', data='21345')
 
 * Adding a non-control field (010-999):
@@ -50,7 +50,7 @@ More examples
         field = pymarc.Field('852', [' ',' '], subfields = ['a', 'DE-15'])
         record.add_field(field)
 
-        # w/ SlimRecord, [' ',' '] are the default indicators
+        # w/ FatRecord, [' ',' '] are the default indicators
         record.add('852', a='DE-15')
 
 * Adding multiple subfields to a non-control field at once:
@@ -61,7 +61,7 @@ More examples
         field = pymarc.Field('980', [' ',' '], subfields=['b', '001'])
         record.add_field(field)
 
-        # w/ SlimRecord
+        # w/ FatRecord
         record.add('980', a='12376', b='001')
 
 
@@ -73,13 +73,13 @@ More examples
         field = pymarc.Field('041', ['0','7'], subfields=['a', 'dt.'])
         record.add_field(field)
 
-        # w/ SlimRecord 
+        # w/ FatRecord 
         record.add('041', a='ger', indicators=['0',' '])
         record.add('041', a='dt.', indicators=['0','7'])
 
 * Specify indicators as strings (since an indicator is just a single char):
 
-        # w/ SlimRecord 
+        # w/ FatRecord 
         record.add('041', a='ger', indicators='0 ')
         record.add('041', a='dt.', indicators='07')
 
@@ -89,7 +89,7 @@ More examples
         __001 = record['001']
         record.remove_field(__001)
 
-        # w/ SlimRecord
+        # w/ FatRecord
         record.remove('001') # removes all 001 fields
 
 * Example from [pymarc.Field](https://github.com/edsu/pymarc/blob/master/pymarc/field.py) source:
@@ -105,7 +105,7 @@ More examples
             ])
         record.add_field(field)
 
-        # w/ SlimRecord
+        # w/ FatRecord
         record.add('245', 
             a='The pragmatic programmer : ', 
             b='from journeyman to master /', 
