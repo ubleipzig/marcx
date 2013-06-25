@@ -6,7 +6,7 @@ import marcx
 import base64
 import pymarc
 import unittest
- 
+
 # 00909cas a2200265   4500
 # 001 000119652
 # 003 DE-576
@@ -71,82 +71,82 @@ class FatRecordTests(unittest.TestCase):
     def test_constructor(self):
         obj = marcx.FatRecord()
         self.assertIsNotNone(obj)
- 
+
     def test_superclass(self):
         obj = marcx.FatRecord()
         self.assertTrue(isinstance(obj, pymarc.Record))
- 
+
     def test_constructor_passes_data(self):
         # data='', to_unicode=False, force_utf8=False,
         # hide_utf8_warnings=False, utf8_handling='strict'
         obj = marcx.FatRecord(data=MARCREC, to_unicode=True, force_utf8=True)
         self.assertEquals(obj.as_marc(), MARCREC)
- 
+
     def test_add_field_fast(self):
         obj = marcx.FatRecord()
         obj.add('980', a='81723')
         self.assertEqual(['81723'], obj['980'].get_subfields('a'))
- 
+
         obj.add('981', a='A', b='B', c='C')
         self.assertEqual(['A'], obj['981'].get_subfields('a'))
         self.assertEqual(['B'], obj['981'].get_subfields('b'))
         self.assertEqual(['C'], obj['981'].get_subfields('c'))
- 
+
     def test_add_indicator(self):
         obj = marcx.FatRecord()
         obj.add('980', a='81723', indicators=['0', ' '])
         self.assertEqual(['0', ' '], obj['980'].indicators)
         self.assertEqual('0', obj['980'].indicator1)
         self.assertEqual(' ', obj['980'].indicator2)
- 
+
     def test_add_two_fields(self):
         obj = marcx.FatRecord()
         obj.add('041', a='ger', indicators=['0', ' '])
         obj.add('041', a='dt.', indicators=['0', '7'])
- 
+
         self.assertEquals(2, len(obj.get_fields('041')))
         self.assertEquals(['ger'], obj['041'].get_subfields('a'))
         self.assertEquals(['ger', 'dt.'],
             [f['a'] for f in obj.get_fields('041')])
- 
+
         self.assertEquals([['0', ' '], ['0', '7']],
             [f.indicators for f in obj.get_fields('041')])
- 
+
     def test_add_control_field(self):
         obj = marcx.FatRecord()
         obj.add('001', data='129')
         self.assertEqual('129', obj['001'].value())
- 
+
         with self.assertRaises(ValueError):
             obj.add('010', data='129')
- 
+
         with self.assertRaises(ValueError):
             obj.add('001', data='helo', c='hello')
- 
+
     def test_accepts_strings_as_indicators(self):
         obj = marcx.FatRecord()
         obj.add('980', a='81723', indicators='0 ')
         self.assertEqual(['0', ' '], obj['980'].indicators)
         self.assertEqual('0', obj['980'].indicator1)
         self.assertEqual(' ', obj['980'].indicator2)
- 
+
         obj.add('981', a='81723', indicators='07')
         self.assertEqual(['0', '7'], obj['981'].indicators)
         self.assertEqual('0', obj['981'].indicator1)
         self.assertEqual('7', obj['981'].indicator2)
- 
+
     def test_does_not_ignore_invalid_indicator_strings(self):
         obj = marcx.FatRecord()
         with self.assertRaises(ValueError):
             obj.add('980', a='81723', indicators='Welcome')
- 
+
     def test_remove_single(self):
         obj = marcx.FatRecord()
         obj.add('001', data='123')
         self.assertEquals(1, len(obj.get_fields('001')))
         obj.remove('001')
         self.assertEquals(0, len(obj.get_fields('001')))
- 
+
     def test_remove_all(self):
         obj = marcx.FatRecord()
         obj.add('001', data='123')
@@ -154,49 +154,49 @@ class FatRecordTests(unittest.TestCase):
         self.assertEquals(2, len(obj.get_fields('001')))
         obj.remove('001')
         self.assertEquals(0, len(obj.get_fields('001')))
- 
-    def test_vs_slim_vs_record(self):        
+
+    def test_vs_slim_vs_record(self):
         # w/ Record
         record = pymarc.Record()
         field = pymarc.Field(
-            tag='245', 
-            indicators=['0', '1'], 
+            tag='245',
+            indicators=['0', '1'],
             subfields=[
-                'a', 'The pragmatic programmer : ', 
-                'b', 'from journeyman to master /', 
-                'c', 'Andrew Hunt, David Thomas.' 
+                'a', 'The pragmatic programmer : ',
+                'b', 'from journeyman to master /',
+                'c', 'Andrew Hunt, David Thomas.'
             ])
         record.add_field(field)
- 
+
         # w/ SlimRecord
         obj = marcx.FatRecord()
-        obj.add('245', 
-            a='The pragmatic programmer : ', 
-            b='from journeyman to master /', 
-            c='Andrew Hunt, David Thomas.', 
+        obj.add('245',
+            a='The pragmatic programmer : ',
+            b='from journeyman to master /',
+            c='Andrew Hunt, David Thomas.',
             indicators='01')
- 
-        self.assertEquals(len(obj.get_fields('245')), 
+
+        self.assertEquals(len(obj.get_fields('245')),
             len(record.get_fields('245')))
- 
+
         self.assertEquals(
-            obj.get_fields('245')[0].get_subfields('a'), 
+            obj.get_fields('245')[0].get_subfields('a'),
             record.get_fields('245')[0].get_subfields('a')
         )
- 
+
         self.assertEquals(
-            obj.get_fields('245')[0].get_subfields('b'), 
+            obj.get_fields('245')[0].get_subfields('b'),
             record.get_fields('245')[0].get_subfields('b')
         )
- 
+
         self.assertEquals(
-            obj.get_fields('245')[0].get_subfields('c'), 
+            obj.get_fields('245')[0].get_subfields('c'),
             record.get_fields('245')[0].get_subfields('c')
         )
- 
+
         # NOTE: this might fail, although the only difference
         # is in the subfield ordering (hashing effect)
         # self.assertEquals(
-        #     obj.get_fields('245')[0].__str__(), 
+        #     obj.get_fields('245')[0].__str__(),
         #     record.get_fields('245')[0].__str__()
         # )

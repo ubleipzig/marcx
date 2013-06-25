@@ -5,6 +5,7 @@
 Few extensions on `pymarc.Record` to make certain
 checks and manipulations a bit easier.
 
+Documentation and Examples: https://github.com/miku/marcx
 """
 
 from pymarc.record import Record, Field
