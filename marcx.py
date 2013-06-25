@@ -8,8 +8,8 @@ checks and manipulations a bit easier.
 """
 
 from pymarc.record import Record, Field
+from pymarc.exceptions import FieldNotFound
 import pyisbn
-import pymarc
 import re
 
 
@@ -147,7 +147,7 @@ def fieldgetter(*fieldspecs):
     return fields
 
 
-class FatRecord(slimrecord.SlimRecord):
+class FatRecord(Record):
     """ A record with some extras.
     """
 
@@ -234,7 +234,7 @@ class FatRecord(slimrecord.SlimRecord):
         current = self['001']
         try:
             self.remove_field(current)
-        except pymarc.exceptions.FieldNotFound as fnf:
+        except FieldNotFound as fnf:
             pass
         self.add('001', data=value)
 
