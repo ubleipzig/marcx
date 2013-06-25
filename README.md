@@ -1,7 +1,7 @@
 README
 ======
 
-*marcx* is a small extension to [pymarc](https://github.com/edsu/pymarc), that adds
+*marcx* is a small extension to [pymarc.Record](https://github.com/edsu/pymarc/blob/master/pymarc/record.py#L72), that adds
 a few shortcuts. The gist are the twins `add` and `remove` and generic `test`
 function.
 
