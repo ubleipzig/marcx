@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
-from marcx import __version__ as version
 
 setup(name='marcx',
-      version=version,
+      version='0.1.1',
       description='Marc Record Utility',
       author='Martin Czygan',
       author_email='martin.czygan@gmail.com',
