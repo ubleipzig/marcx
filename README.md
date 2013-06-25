@@ -20,10 +20,10 @@ Examples
 * Value iteration via `fieldspec` - a `fieldspec` is just a string, that's
   specifying either a tag or a tag and subfield combination.
 
-        for isbn in record.values('020.a'):
+        for isbn in record.vg('020.a'):
             # do something
 
-        for vals in record.values('020', 700.a', '856.x'):
+        for vals in record.vg('020', 700.a', '856.x'):
             # do something
 
 * Tests
