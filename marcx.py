@@ -192,15 +192,15 @@ class FatRecord(Record):
         """
         if data:
             if indicators:
-                raise ValueError(SlimRecord.E_NO_INDICATORS)
-            if not tag in SlimRecord.CONTROL_FIELDS:
-                raise ValueError(SlimRecord.E_NO_DATA)
+                raise ValueError(E_NO_INDICATORS)
+            if not tag in CONTROL_FIELDS:
+                raise ValueError(E_NO_DATA)
         else:
-            if tag in SlimRecord.CONTROL_FIELDS:
-                raise ValueError(SlimRecord.E_EMPTY)
+            if tag in CONTROL_FIELDS:
+                raise ValueError(E_EMPTY)
 
-        if tag in SlimRecord.CONTROL_FIELDS and kwargs:
-            raise ValueError(SlimRecord.E_NO_SUBFIELDS)
+        if tag in FatRecord.CONTROL_FIELDS and kwargs:
+            raise ValueError(FatRecord.E_NO_SUBFIELDS)
 
         if indicators is None:
             indicators = [' ', ' ']
