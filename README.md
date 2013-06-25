@@ -5,6 +5,7 @@ README
 a few shortcuts. The gist are the twins `add` and `remove` and a generic `test`
 function.
 
+[![Build Status](https://travis-ci.org/miku/marcx.png)](https://travis-ci.org/miku/marcx)
 
 Installation
 ------------
