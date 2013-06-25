@@ -362,7 +362,7 @@ class FatRecord(slimrecord.SlimRecord):
 
         """
         fieldspecs = fieldspecstr.split()
-        if all = True:
+        if all:
             return min([fun(value) in valuegetter(*fieldspecs)(self)])
         else:
             for value in valuegetter(*fieldspecs)(self):
