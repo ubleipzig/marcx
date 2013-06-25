@@ -14,6 +14,7 @@ Installation
     $ pip install git+ssh://git@github.com/miku/marcx.git
 
 
+Python 2.6 required. If you want to run the tests, too, you'll need 2.7.
 
 Examples
 --------
