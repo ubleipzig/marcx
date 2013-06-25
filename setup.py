@@ -9,4 +9,4 @@ setup(name='marcx',
       author_email='martin.czygan@gmail.com',
       url='https://github.com/miku/marcx',
       py_modules=['marcx'],
-      install_requires=['pymarc>=2', 'pyisbn'])
+      install_requires=['pymarc>=2.0', 'pyisbn>=0.6'])
