@@ -165,21 +165,21 @@ Maybe with some help from [https://github.com/kachayev/fn.py](https://github.com
 HOF in real
 -----------
 
-        __970c = 'OD'
+    __970c = 'OD'
 
-        for val in record.vg('250.a'):
-            if val.strip(' []') in ['Partitur', 'Stimmen', 'Klavierauszug']:
-                __970c = 'DN'
-                break
+    for val in record.vg('250.a'):
+        if val.strip(' []') in ['Partitur', 'Stimmen', 'Klavierauszug']:
+            __970c = 'DN'
+            break
 
-        if record.test('260.c', _search(r'15|16|17')):
+    if record.test('260.c', _search(r'15|16|17')):
+        __970c = 'DN'
+
+    if record.test('856.3', _search(
+        r'Mus\.pr\.|LB Coburg|Liturg|Hbm/G|Hbm/D|rar\.|St\.th\.|Mus\.ms\.|Mus\.coll|Mus\.N\.')):
             __970c = 'DN'
 
-        if record.test('856.3', _search(
-            r'Mus\.pr\.|LB Coburg|Liturg|Hbm/G|Hbm/D|rar\.|St\.th\.|Mus\.ms\.|Mus\.coll|Mus\.N\.')):
-                __970c = 'DN'
+    if record.test('856.3', _search(r'rar\.|Mus\.ms\.|Mus\.N\.')):
+        record.add('970', d='Quelle')
 
-        if record.test('856.3', _search(r'rar\.|Mus\.ms\.|Mus\.N\.')):
-            record.add('970', d='Quelle')
-
-        record.add('970', c=__970c)
+    record.add('970', c=__970c)
