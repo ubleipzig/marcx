@@ -46,7 +46,7 @@ def _search(value):
     return lambda v: re.search(value, v)
 
 
-def _startwith(value):
+def _startswith(value):
     """ maps to `string.startswith` """
     return lambda v: v.startswith(value)
 
@@ -303,10 +303,10 @@ class FatRecord(Record):
 
         return isbns
 
-    def vg(self, *fieldspecs):
+    def vg(self, *fieldspecs, **kwargs):
         """ Apply valuegetter on self.
         """
-        return valuegetter(*fieldspecs)(self)
+        return valuegetter(*fieldspecs, **kwargs)(self)
 
     def fg(self, *fieldspecs):
         """ Shortcut for `fieldgetter(*fieldspecs)(self)`
@@ -363,7 +363,7 @@ class FatRecord(Record):
         """
         fieldspecs = fieldspecstr.split()
         if all:
-            return min([fun(value) in valuegetter(*fieldspecs)(self)])
+            return min([fun(value) for value in valuegetter(*fieldspecs)(self)])
         else:
             for value in valuegetter(*fieldspecs)(self):
                 if fun(value):
