@@ -2,8 +2,17 @@ README
 ======
 
 *marcx* is a small extension to [pymarc.Record](https://github.com/edsu/pymarc/blob/master/pymarc/record.py#L72), that adds
-a few shortcuts. The gist are the twins `add` and `remove` and generic `test`
+a few shortcuts. The gist are the twins `add` and `remove` and a generic `test`
 function.
+
+
+Installation
+------------
+
+
+    $ pip install git+ssh://git@github.com/miku/marcx.git
+
+
 
 Examples
 --------
@@ -183,3 +192,11 @@ HOF in real
         record.add('970', d='Quelle')
 
     record.add('970', c=__970c)
+
+
+Development
+-----------
+
+Easiest way to run the tests is via `nose`:
+
+    $ nosetests
