@@ -12,6 +12,18 @@ from pymarc.exceptions import FieldNotFound
 import pyisbn
 import re
 
+__all__ = [
+    'FatRecord',
+    '_equals',
+    '_not',
+    '_match',
+    '_search',
+    '_startswith',
+    '_endswith',
+    'valuegetter',
+    'fieldgetter'
+]
+
 
 def isbn_convert(self, isbn_10_or_13):
     """ Return the *other* ISBN representation. Returns `None`
