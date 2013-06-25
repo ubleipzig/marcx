@@ -4,7 +4,7 @@ README
  `marcx.FatRecord` is a small extension to 
 [pymarc.Record](https://github.com/edsu/pymarc/blob/master/pymarc/record.py#L72), 
 that adds a few shortcuts. The gist are the twins 
-`add` and `remove`, a (subfield) value generator and a generic `test` function.
+`add` and `remove`, a (subfield) value generator `vg` and a generic `test` function.
 
 [![Build Status](https://travis-ci.org/miku/marcx.png)](https://travis-ci.org/miku/marcx)
 
