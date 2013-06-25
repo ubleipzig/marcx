@@ -192,12 +192,12 @@ class FatRecord(Record):
         """
         if data:
             if indicators:
-                raise ValueError(E_NO_INDICATORS)
-            if not tag in CONTROL_FIELDS:
-                raise ValueError(E_NO_DATA)
+                raise ValueError(FatRecord.E_NO_INDICATORS)
+            if not tag in FatRecord.CONTROL_FIELDS:
+                raise ValueError(FatRecord.E_NO_DATA)
         else:
-            if tag in CONTROL_FIELDS:
-                raise ValueError(E_EMPTY)
+            if tag in FatRecord.CONTROL_FIELDS:
+                raise ValueError(FatRecord.E_EMPTY)
 
         if tag in FatRecord.CONTROL_FIELDS and kwargs:
             raise ValueError(FatRecord.E_NO_SUBFIELDS)
@@ -208,7 +208,7 @@ class FatRecord(Record):
             if len(indicators) == 2:
                 indicators = [indicators[0], indicators[1]]
             else:
-                raise ValueError(E_INVALID_INDICATOR)
+                raise ValueError(FatRecord.E_INVALID_INDICATOR)
 
         if data:  # == control field (001 -- 009)
             field = Field(tag, data=data)
