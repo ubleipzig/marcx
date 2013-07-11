@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-import unittest
-import marcx
 import base64
+import marcx
 import pymarc
 import unittest
 
@@ -59,7 +58,8 @@ class FatRecordTests(unittest.TestCase):
     def test_sigels_add_remove(self):
         r = marcx.FatRecord()
         self.assertTrue(hasattr(r, 'sigels'), msg='no `sigels` attribute')
-        self.assertEqual(0, len(r.sigels), msg='sigel not empty on fresh record')
+        self.assertEqual(0, len(r.sigels),
+                         msg='sigel not empty on fresh record')
 
     def test_can_set_control_number(self):
         r = marcx.FatRecord()
