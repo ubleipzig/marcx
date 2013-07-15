@@ -385,6 +385,3 @@ class FatRecord(Record):
                     return True
         return False
 
-    def t(self, *args, **kwargs):
-        """ shorter that `test` """
-        return self.test(*args, **kwargs)
