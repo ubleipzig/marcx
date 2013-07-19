@@ -318,6 +318,17 @@ class FatRecord(Record):
 
         return isbns
 
+    def vfirst(self, *fieldspecs, **kwargs):
+        """ Return the [first] [v]alue or the value given by the keyword
+        argument `default`, which defaults to `None`.
+        """
+        default = kwargs.get('default', None)
+        values = [ val for val in self.vg(*fieldspecs, **kwargs) ]
+        if values:
+            return values[0]
+        else:
+            return default
+
     def vg(self, *fieldspecs, **kwargs):
         """ Apply valuegetter on self.
         """

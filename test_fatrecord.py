@@ -200,3 +200,16 @@ class FatRecordTests(unittest.TestCase):
         #     obj.get_fields('245')[0].__str__(),
         #     record.get_fields('245')[0].__str__()
         # )
+
+    def test_get_first_value(self):
+        obj = marcx.FatRecord(data=MARCREC, to_unicode=True, force_utf8=True)
+        self.assertEquals(obj.vfirst('041.a'), 'ger')
+        self.assertEquals(obj.vfirst('260.a'), 'Linz :')
+        self.assertEquals(obj.vfirst('999.9'), None)
+        self.assertEquals(obj.vfirst('999.9', default='X'), 'X')
+
+    def test_get_first_many_values(self):
+        obj = marcx.FatRecord()
+        for i in range(100):
+            obj.add('020', a='isbn-no-%s' % i)
+        self.assertEquals(obj.vfirst('020.a'), 'isbn-no-0')
