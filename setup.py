@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='marcx',
-      version='0.1.1',
+      version='0.1.2',
       description='Marc Record Utility',
       author='Martin Czygan',
       author_email='martin.czygan@gmail.com',
