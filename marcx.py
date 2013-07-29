@@ -241,6 +241,7 @@ class FatRecord(Record):
 
     def vg(self, *fieldspecs, **kwargs):
         """ Apply valuegetter on self.
+        Shortcut for `valuegetter(*fieldspecs)(self)`
         """
         return valuegetter(*fieldspecs, **kwargs)(self)
 
