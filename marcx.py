@@ -124,6 +124,8 @@ def valuegetter(*fieldspecs, **kwargs):
                         else:
                             for value in field.subfields[1::2]:
                                 yield value
+    values.__doc__ = 'returns a value generator over %s' % (
+        ', '.join(fieldspecs))
     return values
 
 
@@ -150,6 +152,8 @@ def fieldgetter(*fieldspecs):
                     else:
                         for value in field.subfields[1::2]:
                             yield field, value
+    fields.__doc__ = 'returns a field generator over %s' % (
+        ', '.join(fieldspecs))
     return fields
 
 
