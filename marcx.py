@@ -250,9 +250,17 @@ class FatRecord(Record):
         """
         return fieldgetter(*fieldspecs)(self)
 
-    def remove_field_if(self, fieldspecstr, fun):
+    def remove_field_if(self, *args):
         """ Remove a field from this record, if
         `fun(value)` evaluates to `True`.
+
+        The real signature is like:
+        
+            remove_field_if(self, fieldspec, fun):
+
+        but a variable number of fieldspecs can be added,
+        so we have to resort to `*args` and figure out, which one is a function,
+        by asking if the argument is `callable`.
 
         Example:
 
@@ -280,10 +288,19 @@ class FatRecord(Record):
         =020  \\$a11111111
     
         """
-        fieldspecs = fieldspecstr.split()
+        fieldspecs = set()
+        function = lambda x: x
+        for arg in args:
+            if callable(arg):
+                function = arg
+            elif isinstance(arg, basestring):
+                fieldspecs.add(arg)
+            else:
+                raise ValueError('argument must be callable (test function) '
+                    'or basestring (fieldspec, like 020.a or 856.u, etc.)')
         removed = []
         for field, value in fieldgetter(*fieldspecs)(self):
-            if fun(value):
+            if function(value):
                 removed.append(field)
                 self.remove_field(field)
         return removed
