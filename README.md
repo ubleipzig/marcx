@@ -26,6 +26,7 @@ Overview
         >>> from marcx import _equals, _startswith, _search, _match, _not
         >>> record = FatRecord()
 
+
 * Add and remove fields with one line (control fields get `data`, 
   non-control fields get subfields):
 
@@ -34,13 +35,16 @@ Overview
         >>> record.add('020', a='020161622X')
         >>> record.remove('001')
 
+
 * Add fields with many subfields at once:
 
         >>> record.add('990', a='1', b='2', c='3', d='5', e='6')
 
+
 * Add numeric subfield with underscores:
 
         >>> record.add('991', _0='Zero', _1='One', _9='Nine')
+
 
 * Value iteration via `fieldspec` - a `fieldspec` is just a string, that's
   specifying either a *tag* or a *tag and subfield* combination.
@@ -48,6 +52,7 @@ Overview
         >>> for isbn in record.vg('020.a'): print(isbn)
         9780201616224
         020161622X
+
 
 * Iterate over multiple fieldspecs at once:
 
@@ -57,12 +62,14 @@ Overview
         020161622X
         0974514055
 
+
 * Iterate over fields, but instead of just returning the values, return 
   a tuple `(fieldobj, value)`:
 
         >>> for isbn in record.fg('020.a'): print(isbn)
         (<pymarc.field.Field object at 0x18e7990>, '9780201616224')
         (<pymarc.field.Field object at 0x18e7950>, '020161622X')
+
 
 * Test field and subfield with predicates. Pass any function, that returns
   a boolean value to `test` and it gets evaluated over all values:
@@ -74,11 +81,13 @@ Overview
         >>> record.test('776.z', _startswith('978'))
         False
 
+
 * Make sure, all values match the predicate with `all=True`:
 
         >>> if not record.test('020', _startswith('978'), all=True):
         ...     print('Not all ISBNs start with 978')
         Not all ISBNs start with 978
+
 
 * One logical operator ships with *marcx*, the unary *not*, so the above could 
   also be written with `_not`, without `_all`:
@@ -86,6 +95,7 @@ Overview
         >>> if record.test('020', _not(_startswith('978'))):
         ...     print('At least one ISBN does not start with 978')
         At least one ISBN does not start with 978
+
 
 * Test multiple fieldspecs at once:
 
@@ -98,80 +108,82 @@ More examples
 
 * Adding a control field (001-009):
 
-        # w/ Record
-        field = pymarc.Field('001', data='12345')
-        record.add_field(field)
+        >>> import pymarc
 
-        # w/ FatRecord
-        record.add('001', data='21345')
+        >>> # w/ Record
+        >>> field = pymarc.Field('001', data='12345')
+        >>> record.add_field(field)
+
+        >>> # w/ FatRecord
+        >>> record.add('001', data='21345')
 
 * Adding a non-control field (010-999):
 
-        # w/ Record
-        field = pymarc.Field('852', [' ',' '], subfields = ['a', 'DE-15'])
-        record.add_field(field)
+        >>> # w/ Record
+        >>> field = pymarc.Field('852', [' ',' '], subfields = ['a', 'DE-15'])
+        >>> record.add_field(field)
 
-        # w/ FatRecord, [' ',' '] are the default indicators
-        record.add('852', a='DE-15')
+        >>> # w/ FatRecord, [' ',' '] are the default indicators
+        >>> record.add('852', a='DE-15')
 
 * Adding multiple subfields to a non-control field at once:
 
-        # w/ Record
-        field = pymarc.Field('980', [' ',' '], subfields=['a', '12376'])
-        record.add_field(field)
-        field = pymarc.Field('980', [' ',' '], subfields=['b', '001'])
-        record.add_field(field)
-
-        # w/ FatRecord
-        record.add('980', a='12376', b='001')
+        >>> # w/ Record
+        >>> field = pymarc.Field('980', [' ',' '], subfields=['a', '12376'])
+        >>> record.add_field(field)
+        >>> field = pymarc.Field('980', [' ',' '], subfields=['b', '001'])
+        >>> record.add_field(field)
+ 
+        >>> # w/ FatRecord
+        >>> record.add('980', a='12376', b='001')
 
 
 * Adding multiple subfields to a non-control field at once with different indicators:
 
-        # w/ Record
-        field = pymarc.Field('041', ['0',' '], subfields=['a', 'ger'])
-        record.add_field(field)
-        field = pymarc.Field('041', ['0','7'], subfields=['a', 'dt.'])
-        record.add_field(field)
+        >>> # w/ Record
+        >>> field = pymarc.Field('041', ['0',' '], subfields=['a', 'ger'])
+        >>> record.add_field(field)
+        >>> field = pymarc.Field('041', ['0','7'], subfields=['a', 'dt.'])
+        >>> record.add_field(field)
 
-        # w/ FatRecord 
-        record.add('041', a='ger', indicators=['0',' '])
-        record.add('041', a='dt.', indicators=['0','7'])
+        >>> # w/ FatRecord 
+        >>> record.add('041', a='ger', indicators=['0',' '])
+        >>> record.add('041', a='dt.', indicators=['0','7'])
 
 * Specify indicators as strings (since an indicator is just a single char):
 
-        # w/ FatRecord 
-        record.add('041', a='ger', indicators='0 ')
-        record.add('041', a='dt.', indicators='07')
+        >>> # w/ FatRecord 
+        >>> record.add('041', a='ger', indicators='0 ')
+        >>> record.add('041', a='dt.', indicators='07')
 
 * Removing a field:
 
-        # w/ Record
-        __001 = record['001']
-        record.remove_field(__001)
+        >>> # w/ Record
+        >>> __001 = record['001']
+        >>> record.remove_field(__001)
 
-        # w/ FatRecord
-        record.remove('001') # removes all 001 fields
+        >>> # w/ FatRecord
+        >>> record.remove('001') # removes all 001 fields
 
 * Example from [pymarc.Field](https://github.com/edsu/pymarc/blob/master/pymarc/field.py) source:
 
-        # w/ Record
-        field = Field(
-            tag='245', 
-            indicators=['0', '1'], 
-            subfields=[
-                'a', 'The pragmatic programmer : ', 
-                'b', 'from journeyman to master /', 
-                'c', 'Andrew Hunt, David Thomas.' 
-            ])
-        record.add_field(field)
+        >>> # w/ Record
+        ... field = Field(
+        ... tag='245', 
+        ... indicators=['0', '1'], 
+        ... subfields=[
+        ...     'a', 'The pragmatic programmer : ', 
+        ...     'b', 'from journeyman to master /', 
+        ...     'c', 'Andrew Hunt, David Thomas.' 
+        ... ])
+        >>> record.add_field(field)
 
-        # w/ FatRecord
-        record.add('245', 
-            a='The pragmatic programmer : ', 
-            b='from journeyman to master /', 
-            c='Andrew Hunt, David Thomas.', 
-            indicators='01')
+        >>> # w/ FatRecord
+        >>> record.add('245', 
+        ... a='The pragmatic programmer : ', 
+        ... b='from journeyman to master /', 
+        ... c='Andrew Hunt, David Thomas.', 
+        ... indicators='01')
 
 Catching basic errors
 ---------------------
@@ -241,32 +253,32 @@ Higher order function in a real world scenario
     >>> if record.test('260.c', centuries( ('15', '16', '17') )):
     ...     __970c = 'DN'
 
-    specified = (
-        'Mus\.pr\.', 
-        'LB Coburg', 
-        'Liturg', 
-        'Hbm/G', 
-        'Hbm/D', 
-        'rar\.', 
-        'St\.th\.', 
-        'Mus\.ms\.', 
-        'Mus\.coll', 
-        'Mus\.N\.'
-    )
-    tester = lambda it: _search(r'%s' % '|'.join(specified))
-    if record.test('856.3', tester):
-        __970c = 'DN'
+    >>> specified = (
+    ...     'Mus\.pr\.', 
+    ...     'LB Coburg', 
+    ...     'Liturg', 
+    ...     'Hbm/G', 
+    ...     'Hbm/D', 
+    ...     'rar\.', 
+    ...     'St\.th\.', 
+    ...     'Mus\.ms\.', 
+    ...     'Mus\.coll', 
+    ...     'Mus\.N\.'
+    ... )
+    >>> tester = lambda it: _search(r'%s' % '|'.join(specified))
+    >>> if record.test('856.3', tester):
+    ...     __970c = 'DN'
 
-    specified = (
-        'rar\.',
-        'Mus\.ms\.',
-        'Mus\.N\.'
-    )
+    >>> specified = (
+    ...     'rar\.',
+    ...     'Mus\.ms\.',
+    ...     'Mus\.N\.'
+    ... )
 
-    if record.test('856.3', _search(r'%s' % '|'.join(specified))):
-        record.add('970', d='Quelle')
+    >>> if record.test('856.3', _search(r'%s' % '|'.join(specified))):
+    ...     record.add('970', d='Quelle')
 
-    record.add('970', c=__970c)
+    >>> record.add('970', c=__970c)
 
 
 Development
