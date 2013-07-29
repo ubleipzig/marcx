@@ -240,3 +240,9 @@ class FatRecordTests(unittest.TestCase):
         obj.add('776', x='978123123')
         removed = obj.remove_field_if('020.a', '020.z', '776.x', marcx._startswith('978'))
         self.assertEquals(len(removed), 3)
+
+    def test_add_digits_subfields_with_underscore(self):
+        obj = marcx.FatRecord()
+        obj.add('020', a='978123123', _9='Hello')
+        self.assertEquals(
+            obj.get_fields('020')[0].get_subfields('9'), ['Hello'])

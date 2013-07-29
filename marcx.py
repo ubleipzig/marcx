@@ -219,7 +219,9 @@ class FatRecord(Record):
         if data:  # == control field (001 -- 009)
             field = Field(tag, data=data)
         else:     # == non-control field (010 -- 999)
-            subfields = [e for sl in list(kwargs.items()) for e in sl]
+            # rewrite the kwargs to include numerical kwargs like, `_9`
+            subfields = [e for sl in [(k.replace('_', ''), v) 
+                           for k, v in kwargs.iteritems()] for e in sl]
             field = Field(tag, indicators, subfields=subfields)
         self.add_field(field)
 
