@@ -378,29 +378,39 @@ class FatRecord(Record):
         returns `True`, when all values pass the given
         check, e.g.:
 
-        >>> record.test('020.a 020.z', _is_valid_isbn, all=True)
+        >>> record.test('020.a', '020.z', _is_valid_isbn, all=True)
 
         means that for each field and every value the ISBN check
         is performed. Defaults to `False`.
 
         """
-        fieldspecs = fieldspecstr.split()
-        if all:
-            return min([fun(value) for value in valuegetter(*fieldspecs)(self)])
+        fieldspecs = set()
+        function = lambda val: True
+        for arg in args:
+            if callable(arg):
+                function = arg
+            elif isinstance(arg, basestring):
+                fieldspecs.add(arg)
+            else:
+                raise ValueError('argument must be callable (test function) '
+                    'or basestring (fieldspec, like 020.a or 856.u, etc.)')
+        if kwargs.get('all', False):
+            return min([function(value) for value in valuegetter(*fieldspecs)(self)])
         else:
             for value in valuegetter(*fieldspecs)(self):
-                if fun(value):
+                if function(value):
                     return True
+        # all is False and none of the values passed the test
         return False
 
 
-def isbn_convert(self, isbn_10_or_13):
+def isbn_convert(isbn_10_or_13):
     """ Return the *other* ISBN representation. Returns `None`
     if conversion fails.
     """
     try:
         return pyisbn.convert(isbn_10_or_13)
-    except pyisbn.IsbnError as isbnerr:
+    except pyisbn.IsbnError as _:
         pass
 
 
