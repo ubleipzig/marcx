@@ -174,9 +174,6 @@ class FatRecord(Record):
 
     def __init__(self, *args, **kwargs):
         super(FatRecord, self).__init__(*args, **kwargs)
-        self.sigels = set()
-        self.source_id = None
-        self.record_id = None
 
     @classmethod
     def from_doc(cls, doc, **kwargs):
@@ -417,6 +414,12 @@ def isbn_convert(isbn_10_or_13):
 class FincMarc(FatRecord):
     """ Add a few FINC project specific details to `FatRecord`.
     """
+    def __init__(self, *args, **kwargs):
+        super(FincMarc, self).__init__(*args, **kwargs)
+        self.sigels = set()
+        self.source_id = None
+        self.record_id = None
+
     def get_control_number(self):
         """ Return the control number value.
         Raises `AttributeError` on missing value.
