@@ -12,6 +12,7 @@ from pymarc.record import Record, Field
 from pymarc.exceptions import FieldNotFound
 import pyisbn
 import re
+import itertools
 
 __version__ = '0.1.2'
 
@@ -27,6 +28,15 @@ __all__ = [
     'fieldgetter',
     'FincMarc',
 ]
+
+def pairwise(iterable):
+    """
+    http://docs.python.org/2/library/itertools.html#recipes
+    s -> (s0,s1), (s1,s2), (s2, s3), ...
+    """
+    a, b = itertools.tee(iterable)
+    next(b, None)
+    return itertools.izip(a, b)
 
 
 def _equals(value):
@@ -275,10 +285,31 @@ class FatRecord(Record):
             field = Field(tag, indicators, subfields=subfields)
         self.add_field(field)
 
-    def remove(self, tag):
-        """ Removes **all** fields with tag `tag`. """
-        for f in self.get_fields(tag):
-            self.remove_field(f)
+    def remove(self, fieldspec):
+        """
+        Removes **all** fields with tag `tag`.
+        """
+
+        pattern = r'(?P<field>[^.]+)(.(?P<subfield>[^.]+))?'
+        match = re.match(pattern, fieldspec)
+        if not match:
+            return None
+
+        grp = match.groupdict()
+        for field in self.get_fields(grp['field']):
+            if grp['subfield']:
+                updated = []
+                for code, value in pairwise(field.subfields):
+                    if not code == grp['subfield']:
+                        updated += [code, value]
+                # if we removed the last subfield entry,
+                # remove the whole field, too
+                if not updated:
+                    self.remove_field(field)
+                else:
+                    field.subfields = updated
+            else:
+                self.remove_field(field)
 
     def vfirst(self, *fieldspecs, **kwargs):
         """ Return the [first] [v]alue or the value given by the keyword

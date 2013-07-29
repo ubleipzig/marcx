@@ -264,3 +264,30 @@ class FatRecordTests(unittest.TestCase):
 
         self.assertFalse(obj.test('020.a', _is_valid_isbn, all=True))
         self.assertFalse(obj.test('776.x', _is_valid_isbn))
+
+
+    def test_remove(self):
+        """ test field or subfield removal """
+
+        obj = marcx.FatRecord()
+        obj.add('020', a='9783334444333')
+        obj.add('020', a='978000')
+        obj.add('020', z='9783330000333')
+        obj.add('776', x='978111')
+
+        obj.remove('020.a')
+        self.assertEquals(len(obj.get_fields()), 2)
+
+        obj.add('001', data='123')
+        self.assertEquals(len(obj.get_fields()), 3)
+        obj.remove('001')
+        self.assertEquals(len(obj.get_fields()), 2)
+
+        obj.remove('020')
+        self.assertEquals(len(obj.get_fields()), 1)
+
+        obj.remove('776.y')
+        self.assertEquals(len(obj.get_fields()), 1)
+
+        obj.remove('776.x')
+        self.assertEquals(len(obj.get_fields()), 0)
