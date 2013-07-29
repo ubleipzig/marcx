@@ -219,6 +219,14 @@ class FatRecordTests(unittest.TestCase):
         self.assertEquals(len(removed), 1)
 
         obj = marcx.FatRecord()
+        # this is one field!
+        obj.add('020', a='978123123', z='978123123')
+        removed = obj.remove_field_if('020.a', marcx._startswith('978'))
+        self.assertEquals(len(removed), 1)
+        # no other field remains
+        self.assertEquals(len(obj.get_fields()), 0)
+
+        obj = marcx.FatRecord()
         # these are two fields!
         obj.add('020', a='978123123')
         obj.add('020', z='978123123')
