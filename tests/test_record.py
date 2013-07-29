@@ -126,7 +126,7 @@ class RecordTest(unittest.TestCase):
         self.assertEquals(record.isbn(), '006073132X')
         
     def test_multiple_isbn(self):
-        reader = MARCReader(file('test/multi_isbn.dat'))
+        reader = MARCReader(file('tests/multi_isbn.dat'))
         record = reader.next()
         self.assertEquals(record.isbn(), '0914378287')
     
@@ -264,7 +264,7 @@ class RecordTest(unittest.TestCase):
 
     def test_copy(self):
         from copy import deepcopy
-        r1 = MARCReader(file('test/one.dat')).next()
+        r1 = MARCReader(file('tests/one.dat')).next()
         r2 = deepcopy(r1)
         r1.add_field(Field('999', [' ', ' '], subfields=['a', 'foo']))
         r2.add_field(Field('999', [' ', ' '], subfields=['a', 'bar']))
