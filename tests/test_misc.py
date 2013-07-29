@@ -234,7 +234,7 @@ class FatRecordTests(unittest.TestCase):
         self.assertEquals(len(removed), 2)
 
         obj = marcx.FatRecord()
-        # these are two fields!
+        # these are three fields!
         obj.add('020', a='978123123')
         obj.add('020', z='978123123')
         obj.add('776', x='978123123')
