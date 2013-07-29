@@ -25,7 +25,7 @@ __all__ = [
     '_endswith',
     'valuegetter',
     'fieldgetter',
-    'FincMarc,'
+    'FincMarc',
 ]
 
 
