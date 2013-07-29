@@ -246,3 +246,21 @@ class FatRecordTests(unittest.TestCase):
         obj.add('020', a='978123123', _9='Hello')
         self.assertEquals(
             obj.get_fields('020')[0].get_subfields('9'), ['Hello'])
+
+    def test_test(self):
+        def _is_valid_isbn(value):
+            ''' poor man's isbn validator '''
+            return len(value) in (10, 13)
+
+        obj = marcx.FatRecord()
+        # these are three fields!
+        obj.add('020', a='9783334444333')
+        obj.add('020', a='978000')
+        obj.add('020', z='9783330000333')
+        obj.add('776', x='978111')
+
+        self.assertTrue(obj.test('020.a', _is_valid_isbn))
+        self.assertTrue(obj.test('020.z', '776.x', _is_valid_isbn))
+
+        self.assertFalse(obj.test('020.a', _is_valid_isbn, all=True))
+        self.assertFalse(obj.test('776.x', _is_valid_isbn))
