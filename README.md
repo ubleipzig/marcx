@@ -64,7 +64,7 @@ Overview
 
 
 * Iterate over fields, but instead of just returning the values, return 
-  a tuple `(fieldobj, value)`:
+  tuples of the form `(fieldobj, value)`:
 
         >>> for isbn in record.fg('020.a'): print(isbn)
         (<pymarc.field.Field object at 0x18e7990>, '9780201616224')
