@@ -24,18 +24,9 @@ __all__ = [
     '_startswith',
     '_endswith',
     'valuegetter',
-    'fieldgetter'
+    'fieldgetter',
+    'FincMarc,'
 ]
-
-
-def isbn_convert(self, isbn_10_or_13):
-    """ Return the *other* ISBN representation. Returns `None`
-    if conversion fails.
-    """
-    try:
-        return pyisbn.convert(isbn_10_or_13)
-    except pyisbn.IsbnError as isbnerr:
-        pass
 
 
 def _equals(value):
