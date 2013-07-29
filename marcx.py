@@ -184,6 +184,55 @@ class FatRecord(Record):
         stored in Elasticsearch.
 
         Elasticsearch JSON > dict > FatRecord
+
+        Keyword arguments used:
+
+        * encoding      [utf-8]
+        * to_unicode    [True]
+        * force_utf8    [True]
+
+        Example doc:
+
+        {
+            "content": {
+                "830":[
+                    {
+                        "w":"(DE-576)027236307",
+                        "g":"15",
+                        "v":"15",
+                        "a":"Hauterive-Champréveyres",
+                        "ind2":"0",
+                        "ind1":" "
+                    },
+                    {
+                        "w":"(DE-576)017312833",
+                        "v":"40",
+                        "a":"Archéologie neuchâteloise",
+                        "ind2":"0",
+                        "ind1":" "
+                    }
+                ],
+                "300":[
+                    {
+                        "b":"Ill., graph. Darst., Kt.",
+                        "a":"163, 39 S. :",
+                        "ind2":" ",
+                        "ind1":" "
+                    }
+                ],
+                "260": ...
+            ...
+            "original":"00919cam a2200253  b4500001001000..."
+            "sha1":"bd8d3f250d2c8cb210dbb6323240b897f48ddcac",
+            "content_type":"application/marc",
+            "meta": {
+                "tags":[
+                    "da88ecbc0c348fc1f232a41d435c04bd974f390b"
+                ],
+                "timestamp":"201302071200",
+                ...
+            }
+        }
         """
         assert(isinstance(doc, dict))
         encoding = kwargs.get('encoding', 'utf-8')
