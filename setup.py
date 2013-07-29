@@ -8,7 +8,7 @@ metadata manipulations.
 Documentation and examples can be found under: https://github.com/miku/marcx
 """
 
-from distutils.core import setup
+from setuptools import setup
 
 classifiers = """
 Development Status :: 4 - Beta
