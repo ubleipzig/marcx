@@ -344,7 +344,7 @@ class FatRecord(Record):
     
         """
         fieldspecs = set()
-        function = lambda x: x
+        function = lambda val: val
         for arg in args:
             if callable(arg):
                 function = arg
@@ -360,7 +360,7 @@ class FatRecord(Record):
                 self.remove_field(field)
         return removed
 
-    def test(self, fieldspecstr, fun, all=False):
+    def test(self, *args, **kwargs):
         """ Test whether the function
         evaluated on the field values matched
         by fieldspecstr returns `True`.
