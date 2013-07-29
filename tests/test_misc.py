@@ -200,3 +200,35 @@ class FatRecordTests(unittest.TestCase):
         for i in range(100):
             obj.add('020', a='isbn-no-%s' % i)
         self.assertEquals(obj.vfirst('020.a'), 'isbn-no-0')
+
+    def test_remove_field_if(self):
+        obj = marcx.FatRecord(data=MARCREC, to_unicode=True, force_utf8=True)
+
+        removed = obj.remove_field_if('689.5', marcx._equals('DE-576'))
+        self.assertEquals(len(removed), 1)
+
+        removed = obj.remove_field_if('689.5', marcx._equals('DE-576'))
+        self.assertEquals(len(removed), 0)
+
+    def test_remove_field_if_multiple_fields(self):
+        obj = marcx.FatRecord()
+
+        # this is one field!
+        obj.add('020', a='978123123', z='978123123')
+        removed = obj.remove_field_if('020.a', '020.z', marcx._startswith('978'))
+        self.assertEquals(len(removed), 1)
+
+        obj = marcx.FatRecord()
+        # these are two fields!
+        obj.add('020', a='978123123')
+        obj.add('020', z='978123123')
+        removed = obj.remove_field_if('020.a', '020.z', marcx._startswith('978'))
+        self.assertEquals(len(removed), 2)
+
+        obj = marcx.FatRecord()
+        # these are two fields!
+        obj.add('020', a='978123123')
+        obj.add('020', z='978123123')
+        obj.add('776', x='978123123')
+        removed = obj.remove_field_if('020.a', '020.z', '776.x', marcx._startswith('978'))
+        self.assertEquals(len(removed), 3)
