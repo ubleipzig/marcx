@@ -55,19 +55,6 @@ class FatRecordTests(unittest.TestCase):
         r = marcx.FatRecord()
         self.assertIsNotNone(r)
 
-    def test_sigels_add_remove(self):
-        r = marcx.FatRecord()
-        self.assertTrue(hasattr(r, 'sigels'), msg='no `sigels` attribute')
-        self.assertEqual(0, len(r.sigels),
-                         msg='sigel not empty on fresh record')
-
-    def test_can_set_control_number(self):
-        r = marcx.FatRecord()
-        cno = '124387974'
-        r.control_number = cno
-        self.assertEqual(r['001'].value(), cno)
-        self.assertEqual(r.control_number, cno)
-
     def test_constructor(self):
         obj = marcx.FatRecord()
         self.assertIsNotNone(obj)
