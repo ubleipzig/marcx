@@ -72,9 +72,9 @@ def valuegetter(*fieldspecs, **kwargs):
 
     Example:
 
-    >>> from fatrecord import FatRecord, valuegetter
-    >>> with open("~/code/edsu/pymarc/test/marc.dat") as handle:
-    ...    record = FatRecord(data=handle.read())
+    >>> from marcx import FatRecord, valuegetter
+    >>> from urllib import urlopen
+    >>> record = FatRecord(data=urlopen("https://raw.github.com/edsu/pymarc/master/test/marc.dat").read())
 
     In two steps:
 
