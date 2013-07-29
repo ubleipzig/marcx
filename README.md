@@ -2,7 +2,7 @@ README
 ======
 
 `marcx.FatRecord` is a small extension to 
-[pymarc.Record](https://github.com/edsu/pymarc/blob/master/pymarc/record.py#L72), 
+[pymarc.Record](https://github.com/edsu/pymarc/blob/056cea129758c20068aec11a4cb148d65987d905/pymarc/record.py#L72), 
 that adds a few shortcuts. The gist are the twins 
 `add` and `remove`, a (subfield) value generator `vg` and a generic `test` function.
 
@@ -12,36 +12,85 @@ Installation
 ------------
 
 
-    $ pip install git+ssh://git@github.com/miku/marcx.git
+    $ pip install marcx
 
 
 Python 2.6 required. If you want to run the tests, too, you'll need 2.7.
 
-Examples
+Overview
 --------
 
-    from marcx import FatRecord, _startswith
-    record = FatRecord(data=...)
+ * Create a record:
 
-* Add and remove fields with one line
+        >>> from marcx import FatRecord
+        >>> from marcx import _equals, _startswith, _search, _match, _not
+        >>> record = FatRecord()
 
-        record.remove('001')
-        record.add('001', data='12345')
-        record.add('020', a='020161622X')
+* Add and remove fields with one line (control fields get `data`, 
+  non-control fields get subfields):
+
+        >>> record.add('001', data='12345')
+        >>> record.add('020', a='9780201616224')
+        >>> record.add('020', a='020161622X')
+        >>> record.remove('001')
+
+* Add fields with many subfields at once:
+
+        >>> record.add('990', a='1', b='2', c='3', d='5', e='6')
+
+* Add numeric subfield with underscores:
+
+        >>> record.add('991', _0='Zero', _1='One', _9='Nine')
 
 * Value iteration via `fieldspec` - a `fieldspec` is just a string, that's
-  specifying either a tag or a tag and subfield combination.
+  specifying either a *tag* or a *tag and subfield* combination.
 
-        for isbn in record.vg('020.a'):
-            # do something
+        >>> for isbn in record.vg('020.a'): print(isbn)
+        9780201616224
+        020161622X
 
-        for vals in record.vg('020', 700.a', '856.x'):
-            # do something
+* Iterate over multiple fieldspecs at once:
 
-* Tests
+        >>> record.add('776', z='0974514055')
+        >>> for isbn in record.vg('020.a', '776.z'): print(isbn)
+        9780201616224
+        020161622X
+        0974514055
 
-        if record.test('020', _startswith('02016')):
-            # do something
+* Iterate over fields, but instead of just returning the values, return 
+  a tuple `(fieldobj, value)`:
+
+        >>> for isbn in record.fg('020.a'): print(isbn)
+        (<pymarc.field.Field object at 0x18e7990>, '9780201616224')
+        (<pymarc.field.Field object at 0x18e7950>, '020161622X')
+
+* Test field and subfield with predicates. Pass any function, that returns
+  a boolean value to `test` and it gets evaluated over all values:
+
+        >>> if record.test('020', _startswith('978')):
+        ...     print('At least one ISBN starts with 978')
+        At least one ISBN starts with 978
+
+        >>> record.test('776.z', _startswith('978'))
+        False
+
+* Make sure, all values match the predicate with `all=True`:
+
+        >>> if not record.test('020', _startswith('978'), all=True):
+        ...     print('Not all ISBNs start with 978')
+        Not all ISBNs start with 978
+
+* One logical operator ships with *marcx*, the unary *not*, so the above could 
+  also be written with `_not`, without `_all`:
+
+        >>> if record.test('020', _not(_startswith('978'))):
+        ...     print('At least one ISBN does not start with 978')
+        At least one ISBN does not start with 978
+
+* Test multiple fieldspecs at once:
+
+        >>> record.test('776.z', '020.a', _startswith('978'))
+        True
 
 
 More examples
@@ -174,24 +223,47 @@ It would be great, if we could combine these predicates.
 Maybe with some help from [https://github.com/kachayev/fn.py](https://github.com/kachayev/fn.py).
 
 
-HOF in real
------------
+Higher order function in a real world scenario
+----------------------------------------------
 
-    __970c = 'OD'
+    >>> # ... load data ...
+    
+    >>> __970c = 'OD'
 
-    for val in record.vg('250.a'):
-        if val.strip(' []') in ['Partitur', 'Stimmen', 'Klavierauszug']:
-            __970c = 'DN'
-            break
+    >>> for val in [ v.strip(' []') for v in record.vg('250.a') ]:
+    ...     if val in ('Partitur', 'Stimmen', 'Klavierauszug'):
+    ...         __970c = 'DN'
+    ...         break
 
-    if record.test('260.c', _search(r'15|16|17')):
+    >>> # examples for various regex patterns
+    
+    >>> centuries = lambda it: _search(r'%s' % '|'.join(it))
+    >>> if record.test('260.c', centuries( ('15', '16', '17') )):
+    ...     __970c = 'DN'
+
+    specified = (
+        'Mus\.pr\.', 
+        'LB Coburg', 
+        'Liturg', 
+        'Hbm/G', 
+        'Hbm/D', 
+        'rar\.', 
+        'St\.th\.', 
+        'Mus\.ms\.', 
+        'Mus\.coll', 
+        'Mus\.N\.'
+    )
+    tester = lambda it: _search(r'%s' % '|'.join(specified))
+    if record.test('856.3', tester):
         __970c = 'DN'
 
-    if record.test('856.3', _search(
-        r'Mus\.pr\.|LB Coburg|Liturg|Hbm/G|Hbm/D|rar\.|St\.th\.|Mus\.ms\.|Mus\.coll|Mus\.N\.')):
-            __970c = 'DN'
+    specified = (
+        'rar\.',
+        'Mus\.ms\.',
+        'Mus\.N\.'
+    )
 
-    if record.test('856.3', _search(r'rar\.|Mus\.ms\.|Mus\.N\.')):
+    if record.test('856.3', _search(r'%s' % '|'.join(specified))):
         record.add('970', d='Quelle')
 
     record.add('970', c=__970c)
