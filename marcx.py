@@ -321,6 +321,16 @@ class FatRecord(Record):
         return False
 
 
+def isbn_convert(self, isbn_10_or_13):
+    """ Return the *other* ISBN representation. Returns `None`
+    if conversion fails.
+    """
+    try:
+        return pyisbn.convert(isbn_10_or_13)
+    except pyisbn.IsbnError as isbnerr:
+        pass
+
+
 class FincMarc(FatRecord):
     """ Add a few FINC project specific details to `FatRecord`.
     """
