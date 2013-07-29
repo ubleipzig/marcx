@@ -282,7 +282,7 @@ class FatRecord(Record):
 
     def vfirst(self, *fieldspecs, **kwargs):
         """ Return the [first] [v]alue or the value given by the keyword
-        argument `default`, which defaults to `None`.
+        argument `default` if not value exists. `default` defaults to `None`.
         """
         default = kwargs.get('default', None)
         values = [ val for val in self.vg(*fieldspecs, **kwargs) ]
