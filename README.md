@@ -20,7 +20,7 @@ Python 2.6 required. If you want to run the tests, too, you'll need 2.7.
 Overview
 --------
 
- * Create a record:
+* Create a record:
 
         >>> from marcx import FatRecord
         >>> from marcx import _equals, _startswith, _search, _match, _not
