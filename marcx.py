@@ -237,6 +237,102 @@ class FatRecord(Record):
         for f in self.get_fields(tag):
             self.remove_field(f)
 
+    def vfirst(self, *fieldspecs, **kwargs):
+        """ Return the [first] [v]alue or the value given by the keyword
+        argument `default`, which defaults to `None`.
+        """
+        default = kwargs.get('default', None)
+        values = [ val for val in self.vg(*fieldspecs, **kwargs) ]
+        if values:
+            return values[0]
+        else:
+            return default
+
+    def vg(self, *fieldspecs, **kwargs):
+        """ Apply valuegetter on self.
+        """
+        return valuegetter(*fieldspecs, **kwargs)(self)
+
+    def fg(self, *fieldspecs):
+        """ Shortcut for `fieldgetter(*fieldspecs)(self)`
+        """
+        return fieldgetter(*fieldspecs)(self)
+
+    def remove_field_if(self, fieldspecstr, fun):
+        """ Remove a field from this record, if
+        `fun(value)` evaluates to `True`.
+
+        Example:
+
+        Iterate over all 710.a fields and remove the
+        field, if any subfield value startswith
+        'Naxos Digital Services.'
+
+        Returns a list of removed fields.
+
+        >>> record.remove_field_if('710.a',
+            _startswith('Naxos Digital Services.'))
+
+        If there are multiple fields with the same tag,
+        only the fields that match are removed, e.g.:
+
+        >>> record = FatRecord()
+        >>> record.add('020', a='97811111111')
+        >>> record.add('020', a='11111111')
+        >>> rmvd = record.remove_field_if('020.a', _startswith('978'))
+        >>> print(rmvd)
+        [<pymarc.field.Field object at 0x1e53910>]
+
+        >>> print(record)
+        =LDR            22        4500
+        =020  \\$a11111111
+    
+        """
+        fieldspecs = fieldspecstr.split()
+        removed = []
+        for field, value in fieldgetter(*fieldspecs)(self):
+            if fun(value):
+                removed.append(field)
+                self.remove_field(field)
+        return removed
+
+    def test(self, fieldspecstr, fun, all=False):
+        """ Test whether the function
+        evaluated on the field values matched
+        by fieldspecstr returns `True`.
+
+        `fieldspecstr` contains on ore more
+        fieldspecs separated by whitespace, e.g.
+
+        >>> def _is_valid_isbn(value):
+        ...     ''' poor man's isbn validator '''
+        ...     return len(value) in (10, 13)
+        >>> record.test('020.a', _is_valid_isbn)
+        True
+
+        If `all` is set to `True`, the test only
+        returns `True`, when all values pass the given
+        check, e.g.:
+
+        >>> record.test('020.a 020.z', _is_valid_isbn, all=True)
+
+        means that for each field and every value the ISBN check
+        is performed. Defaults to `False`.
+
+        """
+        fieldspecs = fieldspecstr.split()
+        if all:
+            return min([fun(value) for value in valuegetter(*fieldspecs)(self)])
+        else:
+            for value in valuegetter(*fieldspecs)(self):
+                if fun(value):
+                    return True
+        return False
+
+
+class FincMarc(FatRecord):
+    """ Add a few FINC project specific details to `FatRecord`.
+    """
     def get_control_number(self):
         """ Return the control number value.
         Raises `AttributeError` on missing value.
@@ -317,82 +413,3 @@ class FatRecord(Record):
                 isbns.add(alt)
 
         return isbns
-
-    def vfirst(self, *fieldspecs, **kwargs):
-        """ Return the [first] [v]alue or the value given by the keyword
-        argument `default`, which defaults to `None`.
-        """
-        default = kwargs.get('default', None)
-        values = [ val for val in self.vg(*fieldspecs, **kwargs) ]
-        if values:
-            return values[0]
-        else:
-            return default
-
-    def vg(self, *fieldspecs, **kwargs):
-        """ Apply valuegetter on self.
-        """
-        return valuegetter(*fieldspecs, **kwargs)(self)
-
-    def fg(self, *fieldspecs):
-        """ Shortcut for `fieldgetter(*fieldspecs)(self)`
-        """
-        return fieldgetter(*fieldspecs)(self)
-
-    def remove_field_if(self, fieldspecstr, fun):
-        """ Remove a field from this record, if
-        `fun(value)` evaluates to `True`.
-
-        Example:
-
-        Iterate over all 710.a fields and remove the
-        710 field, if any subfield value startswith
-        'Naxos Digital Services.'
-
-        Returns a list of removed fields.
-
-        >>> record.remove_field_if('710.a',
-            _startswith('Naxos Digital Services.'))
-
-        """
-        fieldspecs = fieldspecstr.split()
-        removed = []
-        for field, value in fieldgetter(*fieldspecs)(self):
-            if fun(value):
-                removed.append(field)
-                self.remove_field(field)
-        return removed
-
-    def test(self, fieldspecstr, fun, all=False):
-        """ Test whether the function
-        evaluated on the field values matched
-        by fieldspecstr returns `True`.
-
-        `fieldspecstr` contains on ore more
-        fieldspecs separated by whitespace, e.g.
-
-        >>> def _is_valid_isbn(value):
-        ...     ''' poor man's isbn validator '''
-        ...     return len(value) in (10, 13)
-        >>> record.test('020.a', _is_valid_isbn)
-        True
-
-        If `all` is set to `True`, the test only
-        returns `True`, when all values pass the given
-        check, e.g.:
-
-        >>> record.test('020.a 020.z', _is_valid_isbn, all=True)
-
-        means that for each field and every value the ISBN check
-        is performed. Defaults to `False`.
-
-        """
-        fieldspecs = fieldspecstr.split()
-        if all:
-            return min([fun(value) for value in valuegetter(*fieldspecs)(self)])
-        else:
-            for value in valuegetter(*fieldspecs)(self):
-                if fun(value):
-                    return True
-        return False
-
