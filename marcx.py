@@ -423,7 +423,8 @@ class FatRecord(Record):
                 raise ValueError('argument must be callable (test function) '
                     'or basestring (fieldspec, like 020.a or 856.u, etc.)')
         if kwargs.get('all', False):
-            return min([function(value) for value in valuegetter(*fieldspecs)(self)])
+            return min(
+                [function(value) for value in valuegetter(*fieldspecs)(self)])
         else:
             for value in valuegetter(*fieldspecs)(self):
                 if function(value):
