@@ -66,7 +66,7 @@ Overview
 * Iterate over fields, but instead of just returning the values, return 
   tuples of the form `(fieldobj, value)`:
 
-        >>> for isbn in record.fg('020.a'): print(isbn)
+        >>> for fv in record.fg('020.a'): print(fv)
         (<pymarc.field.Field object at 0x18e7990>, '9780201616224')
         (<pymarc.field.Field object at 0x18e7950>, '020161622X')
 
@@ -284,6 +284,6 @@ Higher order function in a real world scenario
 Development
 -----------
 
-Easiest way to run the tests is via `nose`:
+Easiest way to run the tests is via [nose](https://nose.readthedocs.org/en/latest/):
 
     $ nosetests
