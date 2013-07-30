@@ -4,7 +4,7 @@ README
 `marcx.FatRecord` is a small extension to 
 [pymarc.Record](https://github.com/edsu/pymarc/blob/056cea129758c20068aec11a4cb148d65987d905/pymarc/record.py#L72), 
 that adds a few shortcuts. The gist are the twins 
-`add` and `remove`, a (subfield) value generator `vg` and a generic `test` function.
+`add` and `remove`, a (subfield) value generator `itervalues` and a generic `test` function.
 
 [![Build Status](https://travis-ci.org/miku/marcx.png)](https://travis-ci.org/miku/marcx)
 
@@ -49,7 +49,7 @@ Overview
 * Value iteration via `fieldspec` - a `fieldspec` is just a string, that's
   specifying either a *tag* or a *tag and subfield* combination.
 
-        >>> for isbn in record.vg('020.a'): print(isbn)
+        >>> for isbn in record.itervalues('020.a'): print(isbn)
         9780201616224
         020161622X
 
@@ -57,7 +57,7 @@ Overview
 * Iterate over multiple fieldspecs at once:
 
         >>> record.add('776', z='0974514055')
-        >>> for isbn in record.vg('020.a', '776.z'): print(isbn)
+        >>> for isbn in record.itervalues('020.a', '776.z'): print(isbn)
         9780201616224
         020161622X
         0974514055
@@ -66,7 +66,7 @@ Overview
 * Iterate over fields, but instead of just returning the values, return 
   tuples of the form `(fieldobj, value)`:
 
-        >>> for fv in record.fg('020.a'): print(fv)
+        >>> for fv in record.iterfields('020.a'): print(fv)
         (<pymarc.field.Field object at 0x18e7990>, '9780201616224')
         (<pymarc.field.Field object at 0x18e7950>, '020161622X')
 
@@ -242,7 +242,7 @@ Higher order function in a real world scenario
     
     >>> __970c = 'OD'
 
-    >>> for val in [ v.strip(' []') for v in record.vg('250.a') ]:
+    >>> for val in [ v.strip(' []') for v in record.itervalues('250.a') ]:
     ...     if val in ('Partitur', 'Stimmen', 'Klavierauszug'):
     ...         __970c = 'DN'
     ...         break

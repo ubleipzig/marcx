@@ -109,7 +109,7 @@ def valuegetter(*fieldspecs, **kwargs):
     >>> set(valuegetter('002')(record))
     set([])
 
-    @see also: `FatRecord.vg`
+    @see also: `FatRecord.itervalues`
 
     """
     combine_subfields = kwargs.get('combine_subfields', False)
@@ -311,24 +311,24 @@ class FatRecord(Record):
             else:
                 self.remove_field(field)
 
-    def vfirst(self, *fieldspecs, **kwargs):
+    def firstvalue(self, *fieldspecs, **kwargs):
         """ Return the [first] [v]alue or the value given by the keyword
         argument `default` if not value exists. `default` defaults to `None`.
         """
         default = kwargs.get('default', None)
-        values = [ val for val in self.vg(*fieldspecs, **kwargs) ]
+        values = [ val for val in self.itervalues(*fieldspecs, **kwargs) ]
         if values:
             return values[0]
         else:
             return default
 
-    def vg(self, *fieldspecs, **kwargs):
+    def itervalues(self, *fieldspecs, **kwargs):
         """ Apply valuegetter on self.
         Shortcut for `valuegetter(*fieldspecs)(self)`
         """
         return valuegetter(*fieldspecs, **kwargs)(self)
 
-    def fg(self, *fieldspecs):
+    def iterfields(self, *fieldspecs):
         """ Shortcut for `fieldgetter(*fieldspecs)(self)`
         """
         return fieldgetter(*fieldspecs)(self)

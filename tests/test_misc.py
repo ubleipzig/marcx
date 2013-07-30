@@ -190,16 +190,16 @@ class FatRecordTests(unittest.TestCase):
 
     def test_get_first_value(self):
         obj = marcx.FatRecord(data=MARCREC, to_unicode=True, force_utf8=True)
-        self.assertEquals(obj.vfirst('041.a'), 'ger')
-        self.assertEquals(obj.vfirst('260.a'), 'Linz :')
-        self.assertEquals(obj.vfirst('999.9'), None)
-        self.assertEquals(obj.vfirst('999.9', default='X'), 'X')
+        self.assertEquals(obj.firstvalue('041.a'), 'ger')
+        self.assertEquals(obj.firstvalue('260.a'), 'Linz :')
+        self.assertEquals(obj.firstvalue('999.9'), None)
+        self.assertEquals(obj.firstvalue('999.9', default='X'), 'X')
 
     def test_get_first_many_values(self):
         obj = marcx.FatRecord()
         for i in range(100):
             obj.add('020', a='isbn-no-%s' % i)
-        self.assertEquals(obj.vfirst('020.a'), 'isbn-no-0')
+        self.assertEquals(obj.firstvalue('020.a'), 'isbn-no-0')
 
     def test_remove_field_if(self):
         obj = marcx.FatRecord(data=MARCREC, to_unicode=True, force_utf8=True)
@@ -291,3 +291,16 @@ class FatRecordTests(unittest.TestCase):
 
         obj.remove('776.x')
         self.assertEquals(len(obj.get_fields()), 0)
+
+    def test_itervalues(self):
+        obj = marcx.FatRecord()
+        obj.add('020', a='9783334444333')
+        obj.add('020', a='978000')
+        obj.add('020', z='9783330000333')
+        obj.add('776', x='978111')
+
+        self.assertEquals(len(list(obj.itervalues('020.a'))), 2)
+        self.assertEquals(len(list(obj.itervalues('020'))), 3)
+        self.assertEquals(len(list(obj.itervalues('020', '776'))), 4)
+        self.assertEquals(len(list(obj.itervalues('020', '776', '001'))), 4)
+        self.assertEquals(len(list(obj.itervalues('001'))), 0)
