@@ -8,6 +8,8 @@ that adds a few shortcuts. The gist are the twins
 
 [![Build Status](https://travis-ci.org/miku/marcx.png)](https://travis-ci.org/miku/marcx)
 
+[![PyPi version](https://pypip.in/v/marcx/badge.png)](https://crate.io/packages/marcx/)
+
 Installation
 ------------
 
