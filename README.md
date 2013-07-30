@@ -6,9 +6,7 @@ README
 that adds a few shortcuts. The gist are the twins 
 `add` and `remove`, a (subfield) value generator `itervalues` and a generic `test` function.
 
-[![Build Status](https://travis-ci.org/miku/marcx.png)](https://travis-ci.org/miku/marcx)
-
-[![PyPi version](https://pypip.in/v/marcx/badge.png)](https://crate.io/packages/marcx/)
+[![Build Status](https://travis-ci.org/miku/marcx.png)](https://travis-ci.org/miku/marcx) [![PyPi version](https://pypip.in/v/marcx/badge.png)](https://crate.io/packages/marcx/)
 
 Installation
 ------------
