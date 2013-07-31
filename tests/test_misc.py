@@ -292,6 +292,33 @@ class FatRecordTests(unittest.TestCase):
         obj.remove('776.x')
         self.assertEquals(len(obj.get_fields()), 0)
 
+    def test_remove_subfields(self):
+        obj = marcx.FatRecord()
+        obj.add('020', a='978000', b='123', c='123')
+        obj.remove('020.a')
+        self.assertEquals(obj.get_fields('020')[0].subfields, ['c', '123', 'b', '123'])
+        obj.remove('020.b')
+        self.assertEquals(obj.get_fields('020')[0].subfields, ['c', '123'])
+        obj.remove('020.c')
+        self.assertEquals(obj.get_fields('020'), [])
+
+    def test_remove_cross_field_subfields(self):
+        obj = marcx.FatRecord()
+        obj.add('020', a='978000', b='123')
+        obj.add('020', b='123', c='123')
+
+        obj.remove('020.a')
+        self.assertEquals(obj.get_fields('020')[0].subfields, ['b', '123'])
+        self.assertEquals(obj.get_fields('020')[1].subfields, ['c', '123', 'b', '123'])
+
+        obj.remove('020.b')
+        # note that one field dissappears, since it no longer carries subfields
+        self.assertEquals(obj.get_fields('020')[0].subfields, ['c', '123'])
+
+        obj.remove('020.c')
+        # no more 020 at all
+        self.assertEquals(obj.get_fields('020'), [])
+
     def test_itervalues(self):
         obj = marcx.FatRecord()
         obj.add('020', a='9783334444333')
