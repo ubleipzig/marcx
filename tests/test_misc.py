@@ -312,7 +312,7 @@ class FatRecordTests(unittest.TestCase):
         self.assertEquals(obj.get_fields('020')[1].subfields, ['c', '123', 'b', '123'])
 
         obj.remove('020.b')
-        # note that one field dissappears, since it no longer carries subfields
+        # note that one field disappears, since it no longer carries subfields
         self.assertEquals(obj.get_fields('020')[0].subfields, ['c', '123'])
 
         obj.remove('020.c')
