@@ -32,7 +32,7 @@ __all__ = [
 def pairwise(iterable):
     """
     http://docs.python.org/2/library/itertools.html#recipes
-    s -> (s0,s1), (s1,s2), (s2, s3), ...
+    s -> (s0, s1), (s1, s2), (s2, s3), ...
     """
     a = iter(iterable)
     return itertools.izip(a, a)
@@ -244,6 +244,7 @@ class FatRecord(Record):
                 else:
                     field.subfields = updated
             else:
+                # it is a control field
                 self.remove_field(field)
 
     def firstvalue(self, *fieldspecs, **kwargs):
