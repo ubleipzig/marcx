@@ -34,10 +34,8 @@ def pairwise(iterable):
     http://docs.python.org/2/library/itertools.html#recipes
     s -> (s0,s1), (s1,s2), (s2, s3), ...
     """
-    a, b = itertools.tee(iterable)
-    next(b, None)
-    return itertools.izip(a, b)
-
+    a = iter(iterable)
+    return itertools.izip(a, a)
 
 def _equals(value):
     """ equality """
