@@ -219,7 +219,10 @@ class FatRecord(Record):
 
     def remove(self, fieldspec):
         """
-        Removes **all** fields with tag `tag`.
+        Removes fields or subfields according to `fieldspec`.
+
+        If a non-control field subfield removal leaves no other subfields,
+        delete the field entirely.
         """
 
         pattern = r'(?P<field>[^.]+)(.(?P<subfield>[^.]+))?'
