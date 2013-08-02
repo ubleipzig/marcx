@@ -183,6 +183,17 @@ class FatRecord(Record):
     def __init__(self, *args, **kwargs):
         super(FatRecord, self).__init__(*args, **kwargs)
 
+    @classmethod
+    def from_record(cls, record):
+        if not isinstance(record, Record):
+            raise TypeError('record must be of type pymarc.Record')
+        record.__class__ = FatRecord
+        return record
+
+    def to_record(self):
+        self.__class__ = Record
+        return self
+
     def add(self, tag, data=None, indicators=None, **kwargs):
         """ Add a field to a record. Example:
 

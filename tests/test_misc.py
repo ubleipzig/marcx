@@ -331,3 +331,43 @@ class FatRecordTests(unittest.TestCase):
         self.assertEquals(len(list(obj.itervalues('020', '776'))), 4)
         self.assertEquals(len(list(obj.itervalues('020', '776', '001'))), 4)
         self.assertEquals(len(list(obj.itervalues('001'))), 0)
+
+    def test_from_record(self):
+        record = pymarc.Record()
+        record.add_field(pymarc.Field('001', data='123'))
+        record.add_field(pymarc.Field('020', [' ', ' '], subfields=['a', '123']))
+
+        with self.assertRaises(AttributeError):
+            record.itervalues('020')
+
+        obj = marcx.FatRecord.from_record(record)
+        self.assertEquals(obj.__class__.__name__, 'FatRecord')
+        self.assertEquals(obj.__dict__, record.__dict__)
+        self.assertEquals(list(obj.itervalues('020')), ['123'])
+
+    def test_from_record(self):
+        record = pymarc.Record()
+        record.add_field(pymarc.Field('001', data='123'))
+        record.add_field(pymarc.Field('020', [' ', ' '], subfields=['a', '123']))
+
+        with self.assertRaises(AttributeError):
+            record.itervalues('020')
+
+        obj = marcx.FatRecord.from_record(record)
+        self.assertEquals(obj.__class__.__name__, 'FatRecord')
+        self.assertEquals(obj.__dict__, record.__dict__)
+        self.assertEquals(list(obj.itervalues('020')), ['123'])
+
+    def test_to_record(self):
+        obj = marcx.FatRecord()
+        obj.add('020', a='9783334444333')
+        obj.add('020', a='978000')
+        obj.add('020', z='9783330000333')
+        obj.add('776', x='978111')
+        record = obj.to_record()
+        self.assertEquals(len(record.get_fields()), 4)
+        self.assertEquals(len(record.get_fields('020')), 3)
+        self.assertEquals(record.get_fields('020')[0].value(), '9783334444333')
+        self.assertEquals(record.get_fields('020')[1].value(), '978000')
+        self.assertEquals(record.get_fields('020')[2].value(), '9783330000333')
+        self.assertEquals(record.get_fields('776')[0].value(), '978111')
