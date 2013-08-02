@@ -27,7 +27,7 @@ Overview
         >>> record = FatRecord()
 
 
-⚠ `pymarc.Record` implements subfields via `list`, that means they are
+**⚠** `pymarc.Record` implements subfields via `list`, that means they are
 ordered. When using `FatRecord` and `kwargs` to create subfields, you'll
 lose order - which in some cases might be of importance. Also multiple subfields
 in one field (e.g. multiple places of publication within a single 260 field)
