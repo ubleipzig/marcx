@@ -30,13 +30,15 @@ __all__ = [
     'FincMarc',
 ]
 
+
 def pairwise(iterable):
     """
     http://docs.python.org/2/library/itertools.html#recipes
     s -> (s0, s1), (s1, s2), (s2, s3), ...
     """
-    a = iter(iterable)
-    return itertools.izip(a, a)
+    it = iter(iterable)
+    return itertools.izip(it, it)
+
 
 def _equals(value):
     """ equality """
@@ -83,7 +85,8 @@ def valuegetter(*fieldspecs, **kwargs):
 
     >>> from marcx import FatRecord, valuegetter
     >>> from urllib import urlopen
-    >>> record = FatRecord(data=urlopen("https://raw.github.com/edsu/pymarc/master/test/marc.dat").read())
+    >>> record = FatRecord(data=urlopen(
+    ...    "https://raw.github.com/edsu/pymarc/master/test/marc.dat").read())
 
     In two steps:
 
@@ -273,7 +276,7 @@ class FatRecord(Record):
         argument `default` if not value exists. `default` defaults to `None`.
         """
         default = kwargs.get('default', None)
-        values = [ val for val in self.itervalues(*fieldspecs, **kwargs) ]
+        values = [val for val in self.itervalues(*fieldspecs, **kwargs)]
         if values:
             return values[0]
         else:
@@ -295,12 +298,12 @@ class FatRecord(Record):
         `fun(value)` evaluates to `True`.
 
         The real signature is like:
-        
+
             remove_field_if(self, fieldspec, fun):
 
         but a variable number of fieldspecs can be added,
-        so we have to resort to `*args` and figure out, which one is a function,
-        by asking if the argument is `callable`.
+        so we have to resort to `*args` and figure out, which one is
+        a function, by asking if the argument is `callable`.
 
         Example:
 
@@ -326,7 +329,7 @@ class FatRecord(Record):
         >>> print(record)
         =LDR            22        4500
         =020  \\$a11111111
-    
+
         """
         fieldspecs = set()
         function = lambda val: False
@@ -337,7 +340,8 @@ class FatRecord(Record):
                 fieldspecs.add(arg)
             else:
                 raise ValueError('argument must be callable (test function) '
-                    'or basestring (fieldspec, like 020.a or 856.u, etc.)')
+                                 'or basestring (fieldspec, like 020.a '
+                                 'or 856.u, etc.)')
         removed = []
         for field, value in fieldgetter(*fieldspecs)(self):
             if function(value):
@@ -378,7 +382,8 @@ class FatRecord(Record):
                 fieldspecs.add(arg)
             else:
                 raise ValueError('argument must be callable (test function) '
-                    'or basestring (fieldspec, like 020.a or 856.u, etc.)')
+                                 'or basestring (fieldspec, like 020.a '
+                                 'or 856.u, etc.)')
         if kwargs.get('all', False):
             return min(
                 [function(value) for value in valuegetter(*fieldspecs)(self)])
