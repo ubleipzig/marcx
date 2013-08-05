@@ -8,11 +8,12 @@ checks and manipulations a bit easier.
 Documentation and Examples: https://github.com/miku/marcx
 """
 
-from pymarc.record import Record, Field
 from pymarc.exceptions import FieldNotFound
+from pymarc.record import Record, Field
+import collections
+import itertools
 import pyisbn
 import re
-import itertools
 
 __version__ = '0.1.6'
 
@@ -222,9 +223,18 @@ class FatRecord(Record):
         if data:  # == control field (001 -- 009)
             field = Field(tag, data=data)
         else:     # == non-control field (010 -- 999)
-            # rewrite the kwargs to include numerical kwargs like, `_9`
-            subfields = [e for sl in [(k.replace('_', ''), v) 
-                           for k, v in kwargs.iteritems()] for e in sl]
+            subfields = []
+            for key, value in kwargs.iteritems():
+                key = key.replace('_', '')
+                if isinstance(value, basestring):
+                    subfields += [key, value]
+                elif isinstance(value, collections.Iterable):
+                    for val in value:
+                        if not isinstance(val, basestring):
+                            raise ValueError('subfield values must be strings')
+                        subfields += [key, val]
+                else:
+                    raise ValueError('subfield values must be strings')
             field = Field(tag, indicators, subfields=subfields)
         self.add_field(field)
 

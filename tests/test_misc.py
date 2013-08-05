@@ -371,3 +371,13 @@ class FatRecordTests(unittest.TestCase):
         self.assertEquals(record.get_fields('020')[1].value(), '978000')
         self.assertEquals(record.get_fields('020')[2].value(), '9783330000333')
         self.assertEquals(record.get_fields('776')[0].value(), '978111')
+
+    def test_add_repeated_subfields(self):
+        obj = marcx.FatRecord()
+        obj.add('020', a=('9783334444333', '1234'))
+        self.assertEquals(len(obj.get_fields()), 1)
+
+    def test_add_fails_on_non_string_non_iterables(self):
+        obj = marcx.FatRecord()
+        with self.assertRaises(ValueError):
+            obj.add('020', a=1243)

@@ -41,6 +41,10 @@ cannot be created with the current `kwargs` mechanism.
         >>> record.add('020', a='020161622X')
         >>> record.remove('001')
 
+* Add repeated subfields:
+
+        >>> record.remove('020.a')
+        >>> record.add('020', a=('9780201616224', '020161622X'))
 
 * Add fields with many subfields at once:
 
