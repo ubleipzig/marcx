@@ -329,7 +329,7 @@ class FatRecord(Record):
     
         """
         fieldspecs = set()
-        function = lambda val: val
+        function = lambda val: False
         for arg in args:
             if callable(arg):
                 function = arg
