@@ -78,7 +78,7 @@ cannot be created with the current `kwargs` mechanism.
 
         >>> for fv in record.iterfields('020.a'): print(fv)
         (<pymarc.field.Field object at 0x18e7990>, '9780201616224')
-        (<pymarc.field.Field object at 0x18e7950>, '020161622X')
+        (<pymarc.field.Field object at 0x18e7990>, '020161622X')
 
 
 * Test field and subfield with predicates. Pass any function, that returns
