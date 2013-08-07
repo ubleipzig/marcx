@@ -130,6 +130,18 @@ lose order - which in some cases might be of importance.
     True
     ```
 
+* `test` can use an function:
+
+    ```python
+    >>> record.test('001', _search('234'))
+    True
+
+    >>> record.test('001', _search('111'))
+    False
+
+    >>> record.test('001', lambda val: sum([ int(d) for d in val]) == 15)
+    True
+    ```
 
 More examples
 -------------
