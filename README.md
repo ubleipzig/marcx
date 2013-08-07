@@ -130,7 +130,7 @@ lose order - which in some cases might be of importance.
     True
     ```
 
-* `test` can use an function:
+* `test` can use any function:
 
     ```python
     >>> record.test('001', _search('234'))
