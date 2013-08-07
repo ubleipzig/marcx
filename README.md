@@ -28,6 +28,20 @@ Overview
     >>> record = FatRecord()
     ```
 
+* Convert between `marcx.FatRecord` and `pymarc.Record`:
+
+    ```python
+    >>> from pymarc import Record, Field
+    >>> pymrec = Record()
+    >>> pymrec.add_field(Field('001', data='12345'))
+    >>> pymrec.add_field(Field('020', [' ', ' '], ['a', '9780201616224']))
+    >>> fatrec = FatRecord.from_record(pymrec)
+    >>> set(fatrec.itervalues('020'))
+    set(['9780201616224'])
+    >>> pymrec = fatrec.to_record()
+    ```
+
+
 ----
 
 **Note** `pymarc.Record` implements subfields via `list`, that means they are
