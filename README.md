@@ -133,13 +133,17 @@ lose order - which in some cases might be of importance.
 * `test` can use any function:
 
     ```python
+    >>> # match and search are from `re`
     >>> record.test('001', _search('234'))
     True
+
+    >>> record.test('001', _match('234'))
+    False
 
     >>> record.test('001', _search('111'))
     False
 
-    >>> record.test('001', lambda val: sum([ int(d) for d in val]) == 15)
+    >>> record.test('001', lambda val: sum([int(d) for d in val]) == 15)
     True
     ```
 
