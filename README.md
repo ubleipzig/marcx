@@ -99,9 +99,8 @@ lose order - which in some cases might be of importance.
   a boolean value to `test` and it gets evaluated over all values:
 
     ```python
-    >>> if record.test('020', _startswith('978')):
-    ...     print('At least one ISBN starts with 978')
-    At least one ISBN starts with 978
+    >>> record.test('020', _startswith('978'))
+    True
 
     >>> record.test('776.z', _startswith('978'))
     False
@@ -110,9 +109,8 @@ lose order - which in some cases might be of importance.
 * Make sure, all values match the predicate with `all=True`:
 
     ```python
-    >>> if not record.test('020', _startswith('978'), all=True):
-    ...     print('Not all ISBNs start with 978')
-    Not all ISBNs start with 978
+    >>> record.test('020', _startswith('978'), all=True):
+    False
     ```
 
 
@@ -120,9 +118,8 @@ lose order - which in some cases might be of importance.
   also be written with `_not`, without `_all`:
 
     ```python
-    >>> if record.test('020', _not(_startswith('978'))):
-    ...     print('At least one ISBN does not start with 978')
-    At least one ISBN does not start with 978
+    >>> record.test('020', _not(_startswith('978'))):
+    True
     ```
 
 
