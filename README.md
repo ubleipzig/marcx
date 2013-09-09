@@ -164,6 +164,16 @@ lose order - which in some cases might be of importance.
     True
     ```
 
+* Test, if a record has any values at all if a certain field:
+
+    ```python
+    >>> record.has('020')
+    True
+    >>> record.has('020.x')
+    False
+    ```
+
+
 More examples
 -------------
 
