@@ -394,6 +394,12 @@ class FatRecord(Record):
         # all is False and none of the values passed the test
         return False
 
+    def has(self, fieldspec):
+        """
+        Return `True` is the record has any value in the specified fieldspec.
+        """
+        return bool(len(set(self.itervalues(fieldspec))) > 0)
+
 
 def isbn_convert(isbn_10_or_13):
     """ Return the *other* ISBN representation. Returns `None`

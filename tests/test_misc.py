@@ -381,3 +381,10 @@ class FatRecordTests(unittest.TestCase):
         obj = marcx.FatRecord()
         with self.assertRaises(ValueError):
             obj.add('020', a=1243)
+
+    def test_has(self):
+        obj = marcx.FatRecord()
+        obj.add('020', a='1243')
+        self.assertTrue(obj.has('020'))
+        self.assertTrue(obj.has('020.a'))
+        self.assertFalse(obj.has('020.b'))
