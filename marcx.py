@@ -2,8 +2,8 @@
 # coding: utf-8
 
 """
-Few extensions on `pymarc.Record` to make certain
-checks and manipulations a bit easier.
+Few extensions on `pymarc.Record` to make certain checks and manipulations
+a bit easier.
 
 Documentation and Examples: https://github.com/miku/marcx
 """
@@ -33,20 +33,23 @@ __all__ = [
 
 def pairwise(iterable):
     """
-    http://docs.python.org/2/library/itertools.html#recipes
-    s -> (s0, s1), (s1, s2), (s2, s3), ...
+    s -> (s0, s1), (s2, s3), (s4, s5), ...
     """
     it = iter(iterable)
     return itertools.izip(it, it)
 
 
 def _equals(value):
-    """ equality """
+    """
+    Equality test.
+    """
     return lambda v: value == v
 
 
 def _not(value):
-    """ usage example: `_not(_equal(...))` """
+    """
+    Usage example: `_not(_equal(...))`.
+    """
     if hasattr(value, '__call__'):
         return lambda v: not value(v)
     else:
@@ -54,27 +57,36 @@ def _not(value):
 
 
 def _match(value):
-    """ maps to `re.match` (match at the beginning of `v`) """
+    """
+    Maps to `re.match` (match at the beginning of `v`).
+    """
     return lambda v: re.match(value, v)
 
 
 def _search(value):
-    """ maps to `re.search` (match anywhere in `v`) """
+    """
+    Maps to `re.search` (match anywhere in `v`).
+    """
     return lambda v: re.search(value, v)
 
 
 def _startswith(value):
-    """ maps to `string.startswith` """
+    """
+    Maps to `string.startswith`.
+    """
     return lambda v: v.startswith(value)
 
 
 def _endswith(value):
-    """ maps to `string.endswith` """
+    """
+    Maps to `string.endswith`.
+    """
     return lambda v: v.endswith(value)
 
 
 def valuegetter(*fieldspecs, **kwargs):
-    """ Modelled after `operator.itemgetter`; takes a variable
+    """
+    Modelled after `operator.itemgetter`. Takes a variable
     number of specs and returns a function, which applied to
     any `pymarc.Record` returns the matching values.
 
@@ -85,8 +97,7 @@ def valuegetter(*fieldspecs, **kwargs):
 
     >>> from marcx import FatRecord, valuegetter
     >>> from urllib import urlopen
-    >>> record = FatRecord(data=urlopen(
-    ...    "https://raw.github.com/edsu/pymarc/master/test/marc.dat").read())
+    >>> record = FatRecord(data=urlopen("http://goo.gl/lfJnw9").read())
 
     In two steps:
 
@@ -97,7 +108,7 @@ def valuegetter(*fieldspecs, **kwargs):
     >>> set(getter(record))
     set(['020161622X'])
 
-    Or in one line:
+    Or in one step:
 
     >>> set(valuegetter('020.a')(record))
     set(['020161622X'])
@@ -112,7 +123,6 @@ def valuegetter(*fieldspecs, **kwargs):
     set([])
 
     @see also: `FatRecord.itervalues`
-
     """
     combine_subfields = kwargs.get('combine_subfields', False)
     pattern = r'(?P<field>[^.]+)(.(?P<subfield>[^.]+))?'
@@ -142,9 +152,9 @@ def valuegetter(*fieldspecs, **kwargs):
 
 
 def fieldgetter(*fieldspecs):
-    """ Similar to `valuegetter`, except this returns
-    (`pymarc.Field`, value) tuples.
-    Takes any number of fieldspecs.
+    """
+    Similar to `valuegetter`, except this returns (`pymarc.Field`, value) 
+    tuples. Takes any number of fieldspecs.
     """
     pattern = r'(?P<field>[^.]+)(.(?P<subfield>[^.]+))?'
 
@@ -170,9 +180,9 @@ def fieldgetter(*fieldspecs):
 
 
 class FatRecord(Record):
-    """ A record with some extras.
     """
-
+    A record with some extras.
+    """
     CONTROL_FIELDS = set(
         ('001', '002', '003', '004', '005', '006', '007', '008', '009'))
 
@@ -189,17 +199,25 @@ class FatRecord(Record):
 
     @classmethod
     def from_record(cls, record):
+        """
+        Factory methods to create FatRecord from pymarc.Record object.
+        """
         if not isinstance(record, Record):
             raise TypeError('record must be of type pymarc.Record')
         record.__class__ = FatRecord
         return record
 
     def to_record(self):
+        """
+        Convert FatRecord to a pymarc.Record class. This is partially
+        addressed in https://github.com/edsu/pymarc/pull/36.
+        """
         self.__class__ = Record
         return self
 
     def add(self, tag, data=None, indicators=None, **kwargs):
-        """ Add a field to a record. Example:
+        """
+        Add a field to a record. Example:
 
         marc.add('020', a='0201657880', z='0201802398')
         """
@@ -272,7 +290,8 @@ class FatRecord(Record):
                 self.remove_field(field)
 
     def firstvalue(self, *fieldspecs, **kwargs):
-        """ Return the [first] [v]alue or the value given by the keyword
+        """
+        Return the [first] [v]alue or the value given by the keyword
         argument `default` if not value exists. `default` defaults to `None`.
         """
         default = kwargs.get('default', None)
@@ -283,18 +302,21 @@ class FatRecord(Record):
             return default
 
     def itervalues(self, *fieldspecs, **kwargs):
-        """ Apply valuegetter on self.
+        """
+        Apply valuegetter on self.
         Shortcut for `valuegetter(*fieldspecs)(self)`
         """
         return valuegetter(*fieldspecs, **kwargs)(self)
 
     def iterfields(self, *fieldspecs):
-        """ Shortcut for `fieldgetter(*fieldspecs)(self)`
+        """
+        Shortcut for `fieldgetter(*fieldspecs)(self)`
         """
         return fieldgetter(*fieldspecs)(self)
 
     def remove_field_if(self, *args):
-        """ Remove a field from this record, if
+        """
+        Remove a field from this record, if
         `fun(value)` evaluates to `True`.
 
         The real signature is like:
@@ -311,9 +333,9 @@ class FatRecord(Record):
         field, if any subfield value startswith
         'Naxos Digital Services.'
 
-        Returns a list of removed fields.
+        Returns a list of removed fields (or an empty list).
 
-        >>> record.remove_field_if('710.a',
+        >>> _ = record.remove_field_if('710.a',
             _startswith('Naxos Digital Services.'))
 
         If there are multiple fields with the same tag,
@@ -340,7 +362,7 @@ class FatRecord(Record):
                 fieldspecs.add(arg)
             else:
                 raise ValueError('argument must be callable (test function) '
-                                 'or basestring (fieldspec, like 020.a '
+                                 'or basestring (fieldspec, like 020 '
                                  'or 856.u, etc.)')
         removed = []
         for field, value in fieldgetter(*fieldspecs)(self):
@@ -350,24 +372,22 @@ class FatRecord(Record):
         return removed
 
     def test(self, *args, **kwargs):
-        """ Test whether the function
-        evaluated on the field values matched
-        by fieldspecstr returns `True`.
+        """ 
+        Test whether the function evaluated on the fields given in `args`
+        returns `True`.
 
-        `fieldspecstr` contains on ore more
-        fieldspecs separated by whitespace, e.g.
-
+        >>> record.add('020.a', a='0387310738', z='1234')
         >>> def _is_valid_isbn(value):
         ...     ''' poor man's isbn validator '''
         ...     return len(value) in (10, 13)
-        >>> record.test('020.a', _is_valid_isbn)
+        >>> record.test('020.a', '020.z', _is_valid_isbn)
         True
 
         If `all` is set to `True`, the test only
-        returns `True`, when all values pass the given
-        check, e.g.:
+        returns `True`, if all values pass the given check, e.g.:
 
         >>> record.test('020.a', '020.z', _is_valid_isbn, all=True)
+        False
 
         means that for each field and every value the ISBN check
         is performed. Defaults to `False`.
@@ -402,7 +422,8 @@ class FatRecord(Record):
 
 
 def isbn_convert(isbn_10_or_13):
-    """ Return the *other* ISBN representation. Returns `None`
+    """
+    Return the *other* ISBN representation. Returns `None`
     if conversion fails.
     """
     try:
@@ -412,7 +433,8 @@ def isbn_convert(isbn_10_or_13):
 
 
 class FincMarc(FatRecord):
-    """ Add a few FINC project specific details to `FatRecord`.
+    """
+    Add a few FINC project specific details to `FatRecord`.
     """
     def __init__(self, *args, **kwargs):
         super(FincMarc, self).__init__(*args, **kwargs)
@@ -422,7 +444,8 @@ class FincMarc(FatRecord):
 
     @classmethod
     def from_doc(cls, doc, **kwargs):
-        """ Create a FatRecord from a dictionary as it is
+        """
+        Create a FatRecord from a dictionary as it is
         stored in Elasticsearch.
 
         Elasticsearch JSON > dict > FatRecord
@@ -487,13 +510,15 @@ class FincMarc(FatRecord):
                          force_utf8=force_utf8)
 
     def get_control_number(self):
-        """ Return the control number value.
+        """
+        Return the control number value.
         Raises `AttributeError` on missing value.
         """
         return self['001'].value()
 
     def set_control_number(self, value):
-        """ Set the control number.
+        """
+        Set the control number.
         """
         current = self['001']
         try:
@@ -507,7 +532,8 @@ class FincMarc(FatRecord):
     finc_id = control_number
 
     def isbn_candidates(self, *fieldspecs):
-        """ Class `pymarc.Record` only has an `isbn` attribute
+        """
+        Class `pymarc.Record` only has an `isbn` attribute
         (returns the first 020.a value). The fat record can take
         a fieldspec. If no fieldspec is given, use `020.a`.
 
@@ -518,7 +544,8 @@ class FincMarc(FatRecord):
         return set(valuegetter(*fieldspecs)(self))
 
     def isbns(self, *fieldspecs):
-        """ Return checked ISBN candidates as `set`.
+        """
+        Return checked ISBN candidates as `set`.
         """
         result = set()
         for candidate in self.isbn_candidates(*fieldspecs):
@@ -530,7 +557,8 @@ class FincMarc(FatRecord):
         return result
 
     def grow_isbns(self):
-        """ Special routine to grow ISBN from various fields and to complement
+        """
+        Special routine to grow ISBN from various fields and to complement
         all 10-char versions with their 13-char versions and vice versa.
 
         An ISBN can be found in:
@@ -544,7 +572,6 @@ class FincMarc(FatRecord):
 
             776.z   776 - Additional Physical Form Entry (R)
                     $z - International Standard Book Number (R)
-
         """
         isbns = self.isbns('020.a')
 
