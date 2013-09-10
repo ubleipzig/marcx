@@ -164,10 +164,12 @@ lose order - which in some cases might be of importance.
     True
     ```
 
-* Test, if a record has any values at all if a certain field:
+* Test, if a record has any values at all in a certain field:
 
     ```python
     >>> record.has('020')
+    True
+    >>> record.has('020.a')
     True
     >>> record.has('020.x')
     False
@@ -315,7 +317,7 @@ def fun(parameter):
         # return parameter == value
         # return re.match(parameter, value)
         # return value.startswith(parameter)
-        return parameter in value:
+        return parameter in value
     return tester
 ```
 
@@ -338,8 +340,8 @@ Higher order function in a real world scenario
 
 >>> # examples for various regex patterns
     
->>> centuries = lambda it: _search(r'%s' % '|'.join(it))
->>> if record.test('260.c', centuries( ('15', '16', '17') )):
+>>> centuries = lambda regex: _search(r'%s' regex)
+>>> if record.test('260.c', centuries('15|16|17')):
 ...     __970c = 'DN'
 
 >>> specified = (
