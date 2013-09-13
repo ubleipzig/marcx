@@ -15,7 +15,7 @@ import itertools
 import pyisbn
 import re
 
-__version__ = '0.1.8'
+__version__ = '0.1.9'
 
 __all__ = [
     'FatRecord',
@@ -153,7 +153,7 @@ def valuegetter(*fieldspecs, **kwargs):
 
 def fieldgetter(*fieldspecs):
     """
-    Similar to `valuegetter`, except this returns (`pymarc.Field`, value) 
+    Similar to `valuegetter`, except this returns (`pymarc.Field`, value)
     tuples. Takes any number of fieldspecs.
     """
     pattern = r'(?P<field>[^.]+)(.(?P<subfield>[^.]+))?'
@@ -372,7 +372,7 @@ class FatRecord(Record):
         return removed
 
     def test(self, *args, **kwargs):
-        """ 
+        """
         Test whether the function evaluated on the fields given in `args`
         returns `True`.
 
@@ -419,6 +419,49 @@ class FatRecord(Record):
         Return `True` is the record has any value in the specified fieldspec.
         """
         return bool(len(set(self.itervalues(fieldspec))) > 0)
+
+    def flatten(self):
+        """
+        Iterate over all key value pairs in the record. Useful, e.g. to
+        extract all values.
+        """
+        # strip the leader
+        d = self.as_dict()
+        del d['leader']
+        stripped = [s.strip() for s in flatten(d)]
+        return [s for s in stripped if s]
+
+
+def flatten(struct):
+    """Cleates a flat list of all items in structured output (dicts, lists, items)
+    Examples:
+    > _flatten({'a': foo, b: bar})
+    [foo, bar]
+    > _flatten([foo, [bar, troll]])
+    [foo, bar, troll]
+    > _flatten(foo)
+    [foo]
+    """
+    if struct is None:
+        return []
+    flat = []
+    if isinstance(struct, dict):
+        for key, result in struct.iteritems():
+            flat += flatten(result)
+        return flat
+
+    if isinstance(struct, basestring):
+        return [struct]
+
+    try:
+        # if iterable
+        for result in struct:
+            flat += flatten(result)
+        return flat
+    except TypeError:
+        pass
+
+    return [struct]
 
 
 def isbn_convert(isbn_10_or_13):

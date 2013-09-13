@@ -21,7 +21,7 @@ Topic :: Text Processing :: General
 """
 
 setup(name='marcx',
-      version='0.1.8',
+      version='0.1.9',
       description='MARC record manipulation library based on pymarc',
       long_description=__doc__,
       classifiers=filter(None, classifiers.split('\n')),

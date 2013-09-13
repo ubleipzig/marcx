@@ -388,3 +388,20 @@ class FatRecordTests(unittest.TestCase):
         self.assertTrue(obj.has('020'))
         self.assertTrue(obj.has('020.a'))
         self.assertFalse(obj.has('020.b'))
+
+    def test_flatten(self):
+        obj = marcx.FatRecord()
+        obj.add('020', a='1243')
+        self.assertEquals(obj.flatten(), ['1243'])
+        obj.add('020', b='Hello World')
+        self.assertEquals(obj.flatten(), ['1243', 'Hello World'])
+        obj.add('020', c='1243')
+        self.assertEquals(obj.flatten(), ['1243', 'Hello World', '1243'])
+
+    def test_flatten_order(self):
+        """
+        Flatten does not guarantee any order.
+        """
+        obj = marcx.FatRecord()
+        obj.add('020', a='1', b='2', c='3', d='4', e='5', f='6')
+        self.assertEquals(set(obj.flatten()), set(['1', '2', '3', '4', '5', '6']))

@@ -175,6 +175,65 @@ lose order - which in some cases might be of importance.
     False
     ```
 
+* Flatten all values in a MARC record, e.g. to build corpuses:
+
+    ```python
+    >>> from marcx import FatRecord; from urllib import urlopen
+    >>> record = FatRecord(data=urlopen("http://goo.gl/lfJnw9").read())
+    >>> record.flatten()
+    ['11778504',
+     '20040816084925.0',
+     '990802s2000    mau      b    001 0 eng',
+     '(DLC)   99043581',
+     '0',
+     'vip',
+     'orignew',
+     '1',
+     'ocip',
+     '19',
+     'y-gencatlg',
+     '0',
+     'acquire',
+     '2 shelf copies',
+     'policy default',
+     "pc05 to ja00 08-02-99; jf05 to subj. 08/02/99; jf11 to sl 08-03-99; ...",
+     'ADDED COPIES: another copy to ASCD ps15 01-12-00',
+     '99043581',
+     '020161622X',
+     'DLC',
+     'DLC',
+     'DLC',
+     'pcc',
+     '0',
+     'QA76.6',
+     '.H857 2000',
+     '0',
+     '0',
+     '005.1',
+     '21',
+     '0',
+     '1',
+     'Hunt, Andrew,',
+     '1964-',
+     '1',
+     'The pragmatic programmer :',
+     'from journeyman to master /',
+     'Andrew Hunt, David Thomas.',
+     '4',
+     'Reading, Mass :',
+     'Addison-Wesley,',
+     '2000.',
+     'xxiv, 321 p. ;',
+     '24 cm.',
+     'Includes bibliographical references.',
+     'Computer programming.',
+     '0',
+     '1',
+     'Thomas, David,',
+     '1956-',
+     'GAP']
+    ```
+
 
 More examples
 -------------
