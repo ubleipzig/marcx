@@ -422,14 +422,12 @@ class FatRecord(Record):
 
     def flatten(self):
         """
-        Iterate over all key value pairs in the record. Useful, e.g. to
-        extract all values.
+        Flatten this record to a simple list of values
+        (from all fields, except the leader).
         """
-        # strip the leader
         d = self.as_dict()
         del d['leader']
-        stripped = [s.strip() for s in flatten(d)]
-        return [s for s in stripped if s]
+        return [s for s in [v.strip() for v in flatten(d)] if s]
 
 
 def flatten(struct):
