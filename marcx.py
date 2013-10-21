@@ -15,7 +15,7 @@ import itertools
 import pyisbn
 import re
 
-__version__ = '0.1.9'
+__version__ = '0.1.10'
 
 __all__ = [
     'FatRecord',
@@ -25,6 +25,7 @@ __all__ = [
     '_search',
     '_startswith',
     '_endswith',
+    'marcdict',
     'valuegetter',
     'fieldgetter',
     'FincMarc',
@@ -471,6 +472,51 @@ def isbn_convert(isbn_10_or_13):
         return pyisbn.convert(isbn_10_or_13)
     except pyisbn.IsbnError as _:
         pass
+
+
+class marcdict(dict):
+    """
+    Allow dictionaries containing MARC data use the same API as
+    :class:`FatRecord`.
+
+    Only returns the values, not the objects. Experimental.
+    """
+    def values(self, *fieldspecs, **kwargs):
+
+        if not fieldspecs:
+            return super(marcdict, self).values()
+
+        result = []
+
+        def dispatch(obj, key):
+            if isinstance(obj, dict):
+                return obj.get(key)
+            if isinstance(obj, list):
+                # If we the nested dictionary has a digit as key, assume,
+                # we want that, not the key'th item of a list
+                if len(obj) > 0 and isinstance(obj[0], dict) and key in obj[0]:
+                    return [v.get(key) for v in obj]
+
+                if key.isdigit():
+                    return obj[int(key)]
+                else:
+                    return [v.get(key) for v in obj]
+
+        for spec in fieldspecs:
+            keys = spec.split('.')
+            current = [self]
+            while True:
+                try:
+                    key = keys.pop(0)
+                except IndexError:
+                    break
+                for c in current:
+                    val = dispatch(c, key)
+                current = [val]
+            # keep the last result
+            result.append(val)
+
+        return flatten(result)
 
 
 class FincMarc(FatRecord):
