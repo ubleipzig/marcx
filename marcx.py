@@ -518,6 +518,10 @@ class marcdict(dict):
 
         return flatten(result)
 
+    def firstvalue(self, *fieldspecs):
+        result = self.values(*fieldspecs)
+        return result[0] if result else None
+
 
 class FincMarc(FatRecord):
     """
