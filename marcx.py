@@ -184,9 +184,6 @@ class FatRecord(Record):
     """
     A record with some extras.
     """
-    CONTROL_FIELDS = set(
-        ('001', '002', '003', '004', '005', '006', '007', '008', '009'))
-
     E_NO_INDICATORS = """control fields take no indicators
     see: http://www.loc.gov/marc/bibliographic/bd00x.html"""
     E_NO_SUBFIELDS = """control fields take no subfields
@@ -225,13 +222,13 @@ class FatRecord(Record):
         if data:
             if indicators:
                 raise ValueError(FatRecord.E_NO_INDICATORS)
-            if not tag in FatRecord.CONTROL_FIELDS:
+            if not tag.startswith('00'):
                 raise ValueError(FatRecord.E_NO_DATA)
         else:
-            if tag in FatRecord.CONTROL_FIELDS:
+            if tag.startswith('00'):
                 raise ValueError(FatRecord.E_EMPTY)
 
-        if tag in FatRecord.CONTROL_FIELDS and kwargs:
+        if tag.startswith('00') and kwargs:
             raise ValueError(FatRecord.E_NO_SUBFIELDS)
 
         if indicators is None:
