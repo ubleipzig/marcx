@@ -15,6 +15,7 @@ that adds a few shortcuts. The gist are the twins
 Installation
 ------------
 
+It's on [pypi](https://pypi.python.org/pypi/marcx), so just:
 
     $ pip install marcx
 
