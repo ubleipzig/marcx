@@ -12,6 +12,7 @@ from pymarc.exceptions import FieldNotFound
 from pymarc.record import Record, Field
 import collections
 import itertools
+import jsonpath_rw as jpath
 import pyisbn
 import re
 
@@ -25,7 +26,7 @@ __all__ = [
     '_search',
     '_startswith',
     '_endswith',
-    'marcdict',
+    'marcdoc',
     'valuegetter',
     'fieldgetter',
     'FincMarc',
@@ -471,53 +472,76 @@ def isbn_convert(isbn_10_or_13):
         pass
 
 
-class marcdict(dict):
+class marcdoc(object):
+    """ A wrapper around an dictionary that represents a MARC record
+    (finc style).
+
+    Example document:
+
+        doc = {
+            "_index" : "bsz",
+            "_type" : "title",
+            "_id" : "036937401",
+            "_score" : 1.0,
+
+            "_source" : {
+                "content": {
+                    "245": [{"a": "De induratione hepatis /", ... } ],
+                    ...
+                },
+                "meta": {"date": "2014-03-04"}
+            }
+        }
+
+    Usage:
+
+        md = marcx.marcdoc(doc)
+        isbns = ', '.join(itertools.chain(md.020a, md.020z, md.0209, md.776z))
     """
-    Allow dictionaries containing MARC data use the same API as
-    :class:`FatRecord`.
+    def __init__(self, document, default_prefix='_source', default_index='*'):
+        self.document = document
+        self.expression_cache = {}
+        self.default_prefix = default_prefix
+        self.default_index = default_index
 
-    Only returns the values, not the objects. Experimental.
-    """
-    def values(self, *fieldspecs, **kwargs):
+    def _tag_to_expression(self, tag, prefix=None, index=None):
+        """ Return a multivalued parser for the given tag (e.g. 020 or 700.a).
+        """
+        if prefix is None:
+            prefix = self.default_prefix
+        if index is None:
+            index = self.default_index
+        tag = tag.replace('.', '').strip()
+        if 3 > len(tag) > 4:
+            raise ValueError('tag must be of the form 008, 020a or 020.a')
+        if len(tag) == 4:
+            tag, code = tag[:3], tag[3:]
+            return jpath.parse('{prefix}.content["{tag}"]'
+                               '[{index}].["{code}"]'.format(prefix=prefix,
+                                tag=tag, index=index, code=code))
+        else:
+            return jpath.parse('{prefix}.content["{tag}"]'.format(prefix=prefix,
+                                                                  tag=tag))
 
-        if not fieldspecs:
-            return super(marcdict, self).values()
+    def isbns(self):
+        return itertools.chain(self.x020a, self.x020z, self.x0209, self.x776z)
 
-        result = []
+    def __getattr__(self, name):
+        """ Dynamic attribute lookup. Converts `obj.x020a` attribute
+        into a jsonpath expression, evaluates it the document and
+        returns a *list* of values. Expressions are lazily evaluated.
 
-        def dispatch(obj, key):
-            if isinstance(obj, dict):
-                return obj.get(key)
-            if isinstance(obj, list):
-                # If we the nested dictionary has a digit as key, assume,
-                # we want that, not the key'th item of a list
-                if len(obj) > 0 and isinstance(obj[0], dict) and key in obj[0]:
-                    return [v.get(key) for v in obj]
-
-                if key.isdigit():
-                    return obj[int(key)]
-                else:
-                    return [v.get(key) for v in obj]
-
-        for spec in fieldspecs:
-            keys = spec.split('.')
-            current = [self]
-            while True:
-                try:
-                    key = keys.pop(0)
-                except IndexError:
-                    break
-                for c in current:
-                    val = dispatch(c, key)
-                current = [val]
-            # keep the last result
-            result.append(val)
-
-        return flatten(result)
-
-    def firstvalue(self, *fieldspecs):
-        result = self.values(*fieldspecs)
-        return result[0] if result else None
+        Cannot start an attribute with a digit, so the first character
+        needs to be some letter.
+        """
+        try:
+            tag = name[1:]
+            if tag not in self.expression_cache:
+                self.expression_cache[tag] = self._tag_to_expression(tag)
+            expression = self.expression_cache[tag]
+            return [m.value for m in expression.find(self.document)]
+        except Exception as exc:
+            raise AttributeError(exc)
 
 
 class FincMarc(FatRecord):
