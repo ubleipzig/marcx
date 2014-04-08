@@ -635,7 +635,7 @@ class FincMarc(FatRecord):
         current = self['001']
         try:
             self.remove_field(current)
-        except FieldNotFound as fnf:
+        except FieldNotFound:
             pass
         self.add('001', data=value)
 
