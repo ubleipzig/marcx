@@ -472,7 +472,7 @@ def isbn_convert(isbn_10_or_13):
         pass
 
 
-class marcdoc(object):
+class marcdoc(dict):
     """ A wrapper around an dictionary that represents a MARC record
     (finc style).
 
@@ -500,6 +500,7 @@ class marcdoc(object):
                                           md.x776z))
     """
     def __init__(self, document, default_prefix='_source', default_index='*'):
+        dict.__init__(self, document)
         self.document = document
         self.expression_cache = {}
         self.default_prefix = default_prefix

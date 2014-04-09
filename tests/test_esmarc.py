@@ -163,3 +163,13 @@ class MarcDocTest(unittest.TestCase):
         self.assertEquals(em.x935b, [u'druck'])
         self.assertEquals(em.x650x, [u'Programming'])
         self.assertEquals(em.x650x, [u'Programming'])
+        self.assertEquals(em.y650x, [u'Programming'])
+        self.assertEquals(em._650x, [u'Programming'])
+        self.assertEquals(em.x999, [])
+        self.assertEquals(em.x999yyyyy, [])
+
+    def test_dict_functionality(self):
+        em = marcx.marcdoc(DOC_091849799)
+        self.assertEquals('bsz', em.get('_index'))
+        self.assertEquals('091849799',
+                          em.get('_source').get('content').get('001'))
