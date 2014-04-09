@@ -496,7 +496,8 @@ class marcdoc(object):
     Usage:
 
         md = marcx.marcdoc(doc)
-        isbns = ', '.join(itertools.chain(md.020a, md.020z, md.0209, md.776z))
+        isbns = ', '.join(itertools.chain(md.x020a, md.x020z, md.x0209,
+                                          md.x776z))
     """
     def __init__(self, document, default_prefix='_source', default_index='*'):
         self.document = document
