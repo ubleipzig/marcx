@@ -505,7 +505,7 @@ class marcdoc(object):
         self.default_prefix = default_prefix
         self.default_index = default_index
 
-    def _tag_to_expression(self, tag, prefix=None, index=None):
+    def tag_to_expression(self, tag, prefix=None, index=None):
         """ Return a multivalued parser for the given tag (e.g. 020 or 700.a).
         """
         if prefix is None:
@@ -538,7 +538,7 @@ class marcdoc(object):
         try:
             tag = name[1:]
             if tag not in self.expression_cache:
-                self.expression_cache[tag] = self._tag_to_expression(tag)
+                self.expression_cache[tag] = self.tag_to_expression(tag)
             expression = self.expression_cache[tag]
             return [m.value for m in expression.find(self.document)]
         except Exception as exc:
