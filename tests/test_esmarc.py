@@ -147,7 +147,7 @@ class MarcDocTest(unittest.TestCase):
         self.assertEquals(em.additional_authors(), [])
         self.assertEquals(em.isbns(), [])
 
-    def test_DOC_03692895X(self):
+    def test_DOC_091849799(self):
         em = marcx.marcdoc(DOC_091849799)
         self.assertNotEquals(None, em)
         self.assertEquals(list(em.isbns()), [u'0262032937',
