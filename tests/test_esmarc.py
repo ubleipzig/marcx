@@ -141,11 +141,11 @@ class MarcDocTest(unittest.TestCase):
     def test_DOC_03692895X(self):
         em = marcx.marcdoc(DOC_03692895X)
         self.assertNotEquals(None, em)
-        self.assertEquals(em.titles(), [u'De hydrophobia nonnulla /'])
-        self.assertEquals(em.subtitles(), [])
-        self.assertEquals(em.authors(), [u'Nahmer, Friedrich Wilhelm V. D.'])
-        self.assertEquals(em.additional_authors(), [])
-        self.assertEquals(em.isbns(), [])
+        self.assertEquals(em.x245a, [u'De hydrophobia nonnulla /'])
+        self.assertEquals(em.x245b, [])
+        self.assertEquals(em.x100a, [u'Nahmer, Friedrich Wilhelm V. D.'])
+        self.assertEquals(em.x700a, [])
+        self.assertEquals(list(em.isbns()), [])
 
     def test_DOC_091849799(self):
         em = marcx.marcdoc(DOC_091849799)
