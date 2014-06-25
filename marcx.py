@@ -16,7 +16,7 @@ import jsonpath_rw as jpath
 import pyisbn
 import re
 
-__version__ = '0.1.13'
+__version__ = '0.1.14'
 
 __all__ = [
     'FatRecord',
