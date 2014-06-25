@@ -21,7 +21,7 @@ Topic :: Text Processing :: General
 """
 
 setup(name='marcx',
-      version='0.1.13',
+      version='0.1.14',
       description='MARC record manipulation library based on pymarc',
       long_description=__doc__,
       classifiers=filter(None, classifiers.split('\n')),
@@ -29,4 +29,5 @@ setup(name='marcx',
       author_email='martin.czygan@gmail.com',
       url='https://github.com/miku/marcx',
       py_modules=['marcx'],
-      install_requires=['pymarc>=2.0', 'pyisbn>=0.6'])
+      install_requires=['pymarc>=2.0', 'pyisbn>=0.6', 'jsonpath-rw==1.3.0',
+                        'ply==3.4'])
