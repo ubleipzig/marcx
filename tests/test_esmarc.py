@@ -136,6 +136,65 @@ DOC_091849799 = {u'_id': u'091849799',
  u'_type': u'title'}
 
 
+DOC_004867815 = {u'_id': u'004867815',
+ u'_index': u'bsz',
+ u'_score': 1.0,
+ u'_source': {u'content': {u'001': u'004867815',
+   u'003': u'DE-576',
+   u'005': u'20110402021658.0',
+   u'007': u'tu',
+   u'008': u'850101s1976    xx             00 0 fre c',
+   u'016': [{u'a': u'(OCoLC)02377915', u'ind1': u' ', u'ind2': u' '}],
+   u'035': [{u'a': u'(DE-599)BSZ004867815', u'ind1': u' ', u'ind2': u' '}],
+   u'040': [{u'a': u'DE-576',
+     u'b': u'ger',
+     u'c': u'DE-576',
+     u'e': u'rakwb',
+     u'ind1': u' ',
+     u'ind2': u' '}],
+   u'041': [{u'a': u'fre', u'ind1': u'0', u'ind2': u' '},
+    {u'a': u'franz.', u'ind1': u'0', u'ind2': u'7'}],
+   u'082': [{u'a': u'938.01', u'ind1': u'0', u'ind2': u' '}],
+   u'084': [{u'2': u'rvk', u'a': u'NH 6000', u'ind1': u' ', u'ind2': u' '}],
+   u'100': [{u'0': u'(DE-576)162013574',
+     u'a': u'Le\u0301vy, Edmond',
+     u'ind1': u'1',
+     u'ind2': u' '}],
+   u'245': [{u'a': u'Athe\u0300nes devant la de\u0301faite de 404 :',
+     u'b': u"histoire d'une crise ide\u0301ologique /",
+     u'c': u'par Edmond Le\u0301vy',
+     u'ind1': u'1',
+     u'ind2': u'0'}],
+   u'260': [{u'a': u'Athe\u0300nes [u.a.] :',
+     u'b': u"E\u0301cole Franc\u0327. d'Athe\u0300nes,",
+     u'c': u'1976',
+     u'ind1': u' ',
+     u'ind2': u' '}],
+   u'300': [{u'a': u'IX, 339 S.', u'ind1': u' ', u'ind2': u' '}],
+   u'490': [{u'a': u"Bibliothe\u0300que des E\u0301coles Franc\u0327aises d'Athe\u0300nes et de Rome ; ",
+     u'ind1': u'1',
+     u'ind2': u' ',
+     u'v': u'225'}],
+   u'591': [{u'a': u'5090: DDSU/sred', u'ind1': u' ', u'ind2': u' '}],
+   u'810': [{u'a': u'E\u0301cole Franc\u0327aise',
+     u'ind1': u'2',
+     u'ind2': u' ',
+     u't': u"Bibliothe\u0300que des Ecoles Franc\u0327aises d'Athe\u0300nes et de Rome",
+     u'v': u'225',
+     u'w': u'(DE-576)000529850'}],
+   u'935': [{u'b': u'druck', u'ind1': u' ', u'ind2': u' '}],
+   u'936': [{u'a': u'NH 6000',
+     u'b': u'Peloponnesischer Krieg und Niedergang der Polis (431 - 360)',
+     u'ind1': u'r',
+     u'ind2': u'v',
+     u'k': [u'Geschichte',
+      u'Griechisch-ro\u0308mische Geschichte',
+      u'Griechische Geschichte',
+      u'Griechische Geschichte (500 - 338)',
+      u'Peloponnesischer Krieg und Niedergang der Polis (431 - 360)']}]},
+  u'meta': {u'date': u'2014-03-04'}},
+ u'_type': u'title'}
+
 class MarcDocTest(unittest.TestCase):
 
     def test_DOC_03692895X(self):
@@ -173,3 +232,15 @@ class MarcDocTest(unittest.TestCase):
         self.assertEquals('bsz', em.get('_index'))
         self.assertEquals('091849799',
                           em.get('_source').get('content').get('001'))
+
+    def test_flattened_689(self):
+        em = marcx.marcdoc(DOC_004867815)
+        self.assertEquals(5, len(em.x936k))
+        self.assertEquals(em.x936, [[{u'a': u'NH 6000', u'k': [
+            u'Geschichte',
+            u'Griechisch-ro\u0308mische Geschichte',
+            u'Griechische Geschichte',
+            u'Griechische Geschichte (500 - 338)',
+            u'Peloponnesischer Krieg und Niedergang der Polis (431 - 360)'],
+            u'b': u'Peloponnesischer Krieg und Niedergang der Polis (431 - 360)',
+            u'ind1': u'r', u'ind2': u'v'}]])

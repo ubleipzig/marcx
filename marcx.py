@@ -16,7 +16,7 @@ import jsonpath_rw as jpath
 import pyisbn
 import re
 
-__version__ = '0.1.14'
+__version__ = '0.1.15'
 
 __all__ = [
     'FatRecord',
@@ -541,7 +541,10 @@ class marcdoc(dict):
             if tag not in self.expression_cache:
                 self.expression_cache[tag] = self.tag_to_expression(tag)
             expression = self.expression_cache[tag]
-            return [m.value for m in expression.find(self.document)]
+            if len(tag) > 3:
+                return flatten([m.value for m in expression.find(self.document)])
+            else:
+                return [m.value for m in expression.find(self.document)]
         except Exception as exc:
             raise AttributeError(exc)
 
