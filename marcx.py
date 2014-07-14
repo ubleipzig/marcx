@@ -13,33 +13,16 @@ from pymarc.record import Record, Field
 import collections
 import itertools
 import jsonpath_rw as jpath
-import pyisbn
 import re
 
 __version__ = '0.1.15'
 
 __all__ = [
     'FatRecord',
-    '_equals',
-    '_not',
-    '_match',
-    '_search',
-    '_startswith',
-    '_endswith',
     'marcdoc',
     'valuegetter',
     'fieldgetter',
-    'FincMarc',
 ]
-
-
-def pairwise(iterable):
-    """
-    s -> (s0, s1), (s2, s3), (s4, s5), ...
-    """
-    it = iter(iterable)
-    return itertools.izip(it, it)
-
 
 def _equals(value):
     """
@@ -84,6 +67,13 @@ def _endswith(value):
     Maps to `string.endswith`.
     """
     return lambda v: v.endswith(value)
+
+def pairwise(iterable):
+    """
+    s -> (s0, s1), (s2, s3), (s4, s5), ...
+    """
+    it = iter(iterable)
+    return itertools.izip(it, it)
 
 
 def valuegetter(*fieldspecs, **kwargs):
@@ -461,20 +451,8 @@ def flatten(struct):
     return [struct]
 
 
-def isbn_convert(isbn_10_or_13):
-    """
-    Return the *other* ISBN representation. Returns `None`
-    if conversion fails.
-    """
-    try:
-        return pyisbn.convert(isbn_10_or_13)
-    except pyisbn.IsbnError as _:
-        pass
-
-
 class marcdoc(dict):
-    """ A wrapper around an dictionary that represents a MARC record
-    (finc style).
+    """ A wrapper around an dictionary that represents a MARC record.
 
     Example document:
 
@@ -528,6 +506,18 @@ class marcdoc(dict):
     def isbns(self):
         return itertools.chain(self.x020a, self.x020z, self.x0209, self.x776z)
 
+    def values(self, *args):
+        result = []
+        for arg in args:
+            if arg not in self.expression_cache:
+                self.expression_cache[arg] = self.tag_to_expression(arg)
+            expression = self.expression_cache[arg]
+            if len(arg) > 3:
+                result += flatten([m.value for m in expression.find(self.document)])
+            else:
+                result += [m.value for m in expression.find(self.document)]
+        return result
+
     def __getattr__(self, name):
         """ Dynamic attribute lookup. Converts `obj.x020a` attribute
         into a jsonpath expression, evaluates it the document and
@@ -547,166 +537,3 @@ class marcdoc(dict):
                 return [m.value for m in expression.find(self.document)]
         except Exception as exc:
             raise AttributeError(exc)
-
-
-class FincMarc(FatRecord):
-    """
-    Add a few FINC project specific details to `FatRecord`.
-    """
-    def __init__(self, *args, **kwargs):
-        super(FincMarc, self).__init__(*args, **kwargs)
-        self.sigels = set()
-        self.source_id = None
-        self.record_id = None
-
-    @classmethod
-    def from_doc(cls, doc, **kwargs):
-        """
-        Create a FatRecord from a dictionary as it is
-        stored in Elasticsearch.
-
-        Elasticsearch JSON > dict > FatRecord
-
-        Keyword arguments used:
-
-        * encoding      [utf-8]
-        * to_unicode    [True]
-        * force_utf8    [True]
-
-        Example doc:
-
-        {
-            "content": {
-                "830":[
-                    {
-                        "w":"(DE-576)027236307",
-                        "g":"15",
-                        "v":"15",
-                        "a":"Hauterive-Champréveyres",
-                        "ind2":"0",
-                        "ind1":" "
-                    },
-                    {
-                        "w":"(DE-576)017312833",
-                        "v":"40",
-                        "a":"Archéologie neuchâteloise",
-                        "ind2":"0",
-                        "ind1":" "
-                    }
-                ],
-                "300":[
-                    {
-                        "b":"Ill., graph. Darst., Kt.",
-                        "a":"163, 39 S. :",
-                        "ind2":" ",
-                        "ind1":" "
-                    }
-                ],
-                "260": ...
-            ...
-            "original":"00919cam a2200253  b4500001001000..."
-            "sha1":"bd8d3f250d2c8cb210dbb6323240b897f48ddcac",
-            "content_type":"application/marc",
-            "meta": {
-                "tags":[
-                    "da88ecbc0c348fc1f232a41d435c04bd974f390b"
-                ],
-                "timestamp":"201302071200",
-                ...
-            }
-        }
-        """
-        assert(isinstance(doc, dict))
-        encoding = kwargs.get('encoding', 'utf-8')
-        to_unicode = kwargs.get('to_unicode', True)
-        force_utf8 = kwargs.get('force_utf8', True)
-        if not 'original' in doc:
-            raise ValueError('document without `original` key')
-        original = doc.get('original', '').encode(encoding)
-        return FatRecord(data=original, to_unicode=to_unicode,
-                         force_utf8=force_utf8)
-
-    def get_control_number(self):
-        """
-        Return the control number value.
-        Raises `AttributeError` on missing value.
-        """
-        return self['001'].value()
-
-    def set_control_number(self, value):
-        """
-        Set the control number.
-        """
-        current = self['001']
-        try:
-            self.remove_field(current)
-        except FieldNotFound:
-            pass
-        self.add('001', data=value)
-
-    # alias control_number to finc_id
-    control_number = property(get_control_number, set_control_number)
-    finc_id = control_number
-
-    def isbn_candidates(self, *fieldspecs):
-        """
-        Class `pymarc.Record` only has an `isbn` attribute
-        (returns the first 020.a value). The fat record can take
-        a fieldspec. If no fieldspec is given, use `020.a`.
-
-        Returns a `set` of candidates.
-        """
-        if not fieldspecs:
-            fieldspecs = ('020.a',)
-        return set(valuegetter(*fieldspecs)(self))
-
-    def isbns(self, *fieldspecs):
-        """
-        Return checked ISBN candidates as `set`.
-        """
-        result = set()
-        for candidate in self.isbn_candidates(*fieldspecs):
-            candidate = (candidate.split() or [""])[0]
-            candidate = candidate.replace('-', '')
-            if len(candidate) in (10, 13):
-                if pyisbn.validate(candidate):
-                    result.add(candidate)
-        return result
-
-    def grow_isbns(self):
-        """
-        Special routine to grow ISBN from various fields and to complement
-        all 10-char versions with their 13-char versions and vice versa.
-
-        An ISBN can be found in:
-
-            020.a   International Standard Book Number (R)
-                    http://www.loc.gov/marc/bibliographic/bd020.html
-
-            020.z   $z - Canceled/invalid ISBN (R)
-
-            020.9   unspecified
-
-            776.z   776 - Additional Physical Form Entry (R)
-                    $z - International Standard Book Number (R)
-        """
-        isbns = self.isbns('020.a')
-
-        for isbn in isbns.copy():
-            alt = isbn_convert(isbn)
-            if alt and alt not in isbns:
-                self.add('020', a=alt)
-                isbns.add(alt)
-
-        # stash cancelled isbns add additional entries into 020.z
-        cancelled = self.isbns('020.z', '020.9')
-        additional = self.isbns('776.z')
-        isbns.update(cancelled | additional)
-
-        for isbn in cancelled | additional:
-            alt = isbn_convert(isbn)
-            if alt and alt not in isbns:
-                self.add('020', z=alt)
-                isbns.add(alt)
-
-        return isbns

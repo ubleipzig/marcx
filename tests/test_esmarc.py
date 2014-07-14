@@ -244,3 +244,27 @@ class MarcDocTest(unittest.TestCase):
             u'Peloponnesischer Krieg und Niedergang der Polis (431 - 360)'],
             u'b': u'Peloponnesischer Krieg und Niedergang der Polis (431 - 360)',
             u'ind1': u'r', u'ind2': u'v'}]])
+
+    def test_values(self):
+        em = marcx.marcdoc(DOC_004867815)
+        self.assertEquals(5, len(em.values('936k')))
+        self.assertEquals(5, len(em.values('936.k')))
+
+        self.assertEquals([u'Geschichte',
+                           u'Griechisch-ro\u0308mische Geschichte',
+                           u'Griechische Geschichte',
+                           u'Griechische Geschichte (500 - 338)',
+                           u'Peloponnesischer Krieg und Niedergang der Polis (431 - 360)'],
+                           em.values('936k'))
+        self.assertEquals([u'Geschichte',
+                           u'Griechisch-ro\u0308mische Geschichte',
+                           u'Griechische Geschichte',
+                           u'Griechische Geschichte (500 - 338)',
+                           u'Peloponnesischer Krieg und Niedergang der Polis (431 - 360)'],
+                           em.values('936.k'))
+
+        self.assertEquals(3, len(em.values('260.a', '260.b', '260.c')))
+        self.assertEquals([u'Athe\u0300nes [u.a.] :',
+                           u"E\u0301cole Franc\u0327. d'Athe\u0300nes,",
+                           u'1976'],
+                           em.values('260.a', '260.b', '260.c'))

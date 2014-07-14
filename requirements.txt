@@ -1,5 +1,4 @@
 jsonpath-rw==1.3.0
 ply==3.4
-pyisbn==0.6.1
-pymarc==2.8.9
+pymarc==3.0.1
 six==1.6.1
