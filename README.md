@@ -27,9 +27,9 @@ Overview
 Iterate over field values quickly with `itervalues` and `iterfields`:
 
 ```python
->>> from marcx import FatRecord, valuegetter
 >>> from urllib import urlopen
->>> record = FatRecord(data=urlopen("http://goo.gl/lfJnw9").read())
+>>> import marcx
+>>> record = marcx.FatRecord(data=urlopen("http://goo.gl/lfJnw9").read())
 
 >>> record.itervalues('020.a')
 <generator object values at 0x2d97690>
@@ -50,7 +50,6 @@ tuples of the form `(field, value)`:
 
 ```python
 >>> for fv in record.iterfields('020.a'): print(fv)
-(<pymarc.field.Field object at 0x18e7990>, '9780201616224')
 (<pymarc.field.Field object at 0x18e7990>, '020161622X')
 ```
 
@@ -61,8 +60,7 @@ a boolean value to `test` and it gets evaluated over all values
 (pass `all=True` if *all* values must evaluate to `True` in the test function):
 
 ```python
->>> # with record id 12345 ...
->>> record.test('001', lambda v: sum([int(d) for d in v]) == 15)
+>>> record.test('001', lambda v: sum([int(d) for d in v]) == 33)
 True
 
 >>> record.test('020.a', lambda v: v.startswith('978'), all=True)
@@ -88,6 +86,7 @@ Add and remove fields with one line (control fields get `data`,
 non-control fields get subfields):
 
 ```python
+>>> record = marcx.FatRecord()
 >>> record.add('001', data='12345')
 >>> record.add('020', a='9780201616224')
 >>> record.add('020', a='020161622X')
@@ -118,8 +117,7 @@ Add numeric subfield with underscores:
 Flatten all values in a MARC record, e.g. to build corpuses:
 
 ```python
->>> from marcx import FatRecord; from urllib import urlopen
->>> record = FatRecord(data=urlopen("http://goo.gl/lfJnw9").read())
+>>> record = marcx.FatRecord(data=urlopen("http://goo.gl/lfJnw9").read())
 >>> record.flatten()
 ['11778504',
  '20040816084925.0',
