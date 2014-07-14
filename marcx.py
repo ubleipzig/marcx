@@ -2,10 +2,8 @@
 # coding: utf-8
 
 """
-Few extensions on `pymarc.Record` to make certain checks and manipulations
-a bit easier.
-
-Documentation and Examples: https://github.com/miku/marcx
+Few extensions on `pymarc.Record` to make certain checks
+and manipulations a bit easier.
 """
 
 from pymarc.exceptions import FieldNotFound
