@@ -22,6 +22,28 @@ __all__ = [
     'fieldgetter',
 ]
 
+class DotDict(dict):
+    """ Dot access for dictionaries. """
+    def __init__(self, d=None, **kwargs):
+        if d is None:
+            d = {}
+        if kwargs:
+            d.update(**kwargs)
+        for k, v in d.iteritems():
+            setattr(self, k, v)
+        for k in self.__class__.__dict__.keys():
+            if not (k.startswith('__') and k.endswith('__')):
+                setattr(self, k, getattr(self, k))
+
+    def __setattr__(self, name, value):
+        if isinstance(value, (list, tuple)):
+            value = [self.__class__(x) if isinstance(x, dict) else x for x in value]
+        else:
+            value = self.__class__(value) if isinstance(value, dict) else value
+        super(DotDict, self).__setattr__(name, value)
+        self[name] = value
+
+
 def _equals(value):
     """
     Equality test.

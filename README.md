@@ -5,7 +5,7 @@ README
 [pymarc.Record](https://github.com/edsu/pymarc/blob/056cea129758c20068aec11a4cb148d65987d905/pymarc/record.py#L72),
 that adds a few shortcuts: `itervalues`, `test`, `add` and `remove`.
 
-[![Build Status](http://img.shields.io/travis/miku/marcx.svg?style=flat)](https://travis-ci.org/miku/marcx)
+[![Build Status](http://img.shields.io/travis/ubleipzig/marcx.svg?style=flat)](https://travis-ci.org/ubleipzig/marcx)
 [![pypi version](http://img.shields.io/pypi/v/marcx.svg?style=flat)](https://pypi.python.org/pypi/marcx)
 
 <!---
