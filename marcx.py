@@ -43,13 +43,11 @@ class DotDict(dict):
         super(DotDict, self).__setattr__(name, value)
         self[name] = value
 
-
 def _equals(value):
     """
     Equality test.
     """
     return lambda v: value == v
-
 
 def _not(value):
     """
@@ -60,13 +58,11 @@ def _not(value):
     else:
         return lambda v: not v
 
-
 def _match(value):
     """
     Maps to `re.match` (match at the beginning of `v`).
     """
     return lambda v: re.match(value, v)
-
 
 def _search(value):
     """
@@ -74,13 +70,11 @@ def _search(value):
     """
     return lambda v: re.search(value, v)
 
-
 def _startswith(value):
     """
     Maps to `string.startswith`.
     """
     return lambda v: v.startswith(value)
-
 
 def _endswith(value):
     """
@@ -94,7 +88,6 @@ def pairwise(iterable):
     """
     it = iter(iterable)
     return itertools.izip(it, it)
-
 
 def valuegetter(*fieldspecs, **kwargs):
     """
@@ -162,7 +155,6 @@ def valuegetter(*fieldspecs, **kwargs):
         ', '.join(fieldspecs))
     return values
 
-
 def fieldgetter(*fieldspecs):
     """
     Similar to `valuegetter`, except this returns (`pymarc.Field`, value)
@@ -189,7 +181,6 @@ def fieldgetter(*fieldspecs):
     fields.__doc__ = 'returns a field generator over %s' % (
         ', '.join(fieldspecs))
     return fields
-
 
 class FatRecord(Record):
     """
@@ -438,7 +429,6 @@ class FatRecord(Record):
         del d['leader']
         return [s for s in [v.strip() for v in flatten(d)] if s]
 
-
 def flatten(struct):
     """Cleates a flat list of all items in structured output (dicts, lists, items)
     Examples:
@@ -469,7 +459,6 @@ def flatten(struct):
         pass
 
     return [struct]
-
 
 class marcdoc(dict):
     """ A wrapper around an dictionary that represents a MARC record.
