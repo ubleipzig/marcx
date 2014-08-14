@@ -12,6 +12,7 @@ import collections
 import itertools
 import jsonpath_rw as jpath
 import re
+import warnings
 
 __version__ = '0.1.16'
 
@@ -487,6 +488,7 @@ class marcdoc(dict):
                                           md.x776z))
     """
     def __init__(self, document, default_prefix='_source', default_index='*'):
+        warnings.warn("deprecated", DeprecationWarning)
         dict.__init__(self, document)
         self.document = document
         self.expression_cache = {}
