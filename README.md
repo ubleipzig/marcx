@@ -21,7 +21,7 @@ It's on [pypi](https://pypi.python.org/pypi/marcx), so just:
 
     $ pip install marcx
 
-Python 2.6 required. If you want to run the tests, too, you'll need 2.7.
+Python 2.6 or higher required. If you want to run the tests, too, you'll need 2.7 or higher. Python 3 should work, too.
 
 Overview
 --------
