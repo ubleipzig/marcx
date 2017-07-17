@@ -29,4 +29,4 @@ setup(name='marcx',
       author_email='martin.czygan@gmail.com',
       url='https://github.com/ubleipzig/marcx',
       py_modules=['marcx'],
-      install_requires=['pymarc>=2.0', 'jsonpath-rw==1.3.0', 'ply==3.4'])
+      install_requires=['pymarc>=2.0', 'jsonpath-rw==1.3.0', 'ply==3.4', 'future>=0.16'])
