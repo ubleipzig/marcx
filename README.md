@@ -12,6 +12,8 @@ that adds a few shortcuts: `itervalues`, `test`, `add` and `remove`.
 [![PyPi version](https://pypip.in/v/marcx/badge.png)](https://crate.io/packages/marcx/)
 -->
 
+Since version 0.2.0, both Python 2 and 3 should be supported.
+
 Installation
 ------------
 
