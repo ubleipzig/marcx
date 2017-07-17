@@ -29,7 +29,7 @@ Iterate over field values quickly with `itervalues` and `iterfields`:
 ```python
 >>> from urllib import urlopen
 >>> import marcx
->>> record = marcx.FatRecord(data=urlopen("http://goo.gl/lfJnw9").read())
+>>> record = marcx.Record(data=urlopen("http://goo.gl/lfJnw9").read())
 
 >>> record.itervalues('020.a')
 <generator object values at 0x2d97690>
@@ -86,7 +86,7 @@ Add and remove fields with one line (control fields get `data`,
 non-control fields get subfields):
 
 ```python
->>> record = marcx.FatRecord()
+>>> record = marcx.Record()
 >>> record.add('001', data='12345')
 >>> record.add('020', a='9780201616224')
 >>> record.add('020', a='020161622X')
@@ -117,7 +117,7 @@ Add numeric subfield with underscores:
 Flatten all values in a MARC record, e.g. to build corpuses:
 
 ```python
->>> record = marcx.FatRecord(data=urlopen("http://goo.gl/lfJnw9").read())
+>>> record = marcx.Record(data=urlopen("http://goo.gl/lfJnw9").read())
 >>> record.flatten()
 ['11778504',
  '20040816084925.0',
@@ -184,7 +184,7 @@ Adding a control field (001-009):
 >>> field = pymarc.Field('001', data='12345')
 >>> record.add_field(field)
 
->>> # w/ FatRecord
+>>> # w/ marcx.Record
 >>> record.add('001', data='21345')
 ```
 
@@ -195,7 +195,7 @@ Adding a non-control field (010-999):
 >>> field = pymarc.Field('852', [' ',' '], subfields = ['a', 'DE-15'])
 >>> record.add_field(field)
 
->>> # w/ FatRecord, [' ',' '] are the default indicators
+>>> # w/ Record, [' ',' '] are the default indicators
 >>> record.add('852', a='DE-15')
 ```
 
@@ -208,7 +208,7 @@ Adding multiple subfields to a non-control field at once:
 >>> field = pymarc.Field('980', [' ',' '], subfields=['b', '001'])
 >>> record.add_field(field)
 
->>> # w/ FatRecord
+>>> # w/ marcx.Record
 >>> record.add('980', a='12376', b='001')
 ```
 
@@ -221,7 +221,7 @@ Adding multiple subfields to a non-control field at once with different indicato
 >>> field = pymarc.Field('041', ['0','7'], subfields=['a', 'dt.'])
 >>> record.add_field(field)
 
->>> # w/ FatRecord
+>>> # w/ marcx.Record
 >>> record.add('041', a='ger', indicators=['0',' '])
 >>> record.add('041', a='dt.', indicators=['0','7'])
 ```
@@ -229,7 +229,7 @@ Adding multiple subfields to a non-control field at once with different indicato
 Specify indicators as strings (since an indicator is just a single char):
 
 ```python
->>> # w/ FatRecord
+>>> # w/ marcx.Record
 >>> record.add('041', a='ger', indicators='0 ')
 >>> record.add('041', a='dt.', indicators='07')
 ```
@@ -241,7 +241,7 @@ Remove a field:
 >>> __001 = record['001']
 >>> record.remove_field(__001)
 
->>> # w/ FatRecord
+>>> # w/ marcx.Record
 >>> record.remove('001') # removes all 001 fields
 ```
 
@@ -259,7 +259,7 @@ Example from [pymarc.Field](https://github.com/edsu/pymarc/blob/master/pymarc/fi
 ... ])
 >>> record.add_field(field)
 
->>> # w/ FatRecord
+>>> # w/ marcx.Record
 >>> record.add('245',
 ... a='The pragmatic programmer : ',
 ... b='from journeyman to master /',
