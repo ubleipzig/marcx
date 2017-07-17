@@ -262,8 +262,12 @@ class Record(pymarc.Record):
         else:     # == non-control field (010 -- 999)
             subfields = []
             for key, value in kwargs.items():
+                if value is None:
+                    continue
                 key = key.replace('_', '')
                 if isinstance(value, basestring):
+                    if value == "":
+                        continue
                     subfields += [key, value]
                 elif isinstance(value, collections.Iterable):
                     for val in value:
