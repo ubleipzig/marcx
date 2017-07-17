@@ -5,6 +5,7 @@ Tests for ES marc.
 """
 
 import unittest
+
 import marcx
 
 DOC_03692895X = {u'_id': u'03692895X',

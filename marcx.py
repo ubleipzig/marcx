@@ -6,33 +6,38 @@ Few extensions on `pymarc.Record` to make certain checks
 and manipulations a bit easier.
 """
 
-from pymarc.exceptions import FieldNotFound
-from pymarc.record import Record, Field
 import collections
 import itertools
-import jsonpath_rw as jpath
 import re
 import warnings
+from builtins import zip
+
+import jsonpath_rw as jpath
+import pymarc
+from past.builtins import basestring
 
 __version__ = '0.1.17'
 
 __all__ = [
-    'FatRecord',
+    'Record',
+    'FatRecord',  # Deprecated, will be removed soon.
     'marcdoc',
     'valuegetter',
     'fieldgetter',
 ]
 
+
 class DotDict(dict):
     """ Dot access for dictionaries. """
+
     def __init__(self, d=None, **kwargs):
         if d is None:
             d = {}
         if kwargs:
             d.update(**kwargs)
-        for k, v in d.iteritems():
+        for k, v in list(d.items()):
             setattr(self, k, v)
-        for k in self.__class__.__dict__.keys():
+        for k in list(self.__class__.__dict__.keys()):
             if not (k.startswith('__') and k.endswith('__')):
                 setattr(self, k, getattr(self, k))
 
@@ -44,11 +49,13 @@ class DotDict(dict):
         super(DotDict, self).__setattr__(name, value)
         self[name] = value
 
+
 def _equals(value):
     """
     Equality test.
     """
     return lambda v: value == v
+
 
 def _not(value):
     """
@@ -59,11 +66,13 @@ def _not(value):
     else:
         return lambda v: not v
 
+
 def _match(value):
     """
     Maps to `re.match` (match at the beginning of `v`).
     """
     return lambda v: re.match(value, v)
+
 
 def _search(value):
     """
@@ -71,11 +80,13 @@ def _search(value):
     """
     return lambda v: re.search(value, v)
 
+
 def _startswith(value):
     """
     Maps to `string.startswith`.
     """
     return lambda v: v.startswith(value)
+
 
 def _endswith(value):
     """
@@ -83,12 +94,14 @@ def _endswith(value):
     """
     return lambda v: v.endswith(value)
 
+
 def pairwise(iterable):
     """
     s -> (s0, s1), (s2, s3), (s4, s5), ...
     """
     it = iter(iterable)
-    return itertools.izip(it, it)
+    return zip(it, it)
+
 
 def valuegetter(*fieldspecs, **kwargs):
     """
@@ -156,6 +169,7 @@ def valuegetter(*fieldspecs, **kwargs):
         ', '.join(fieldspecs))
     return values
 
+
 def fieldgetter(*fieldspecs):
     """
     Similar to `valuegetter`, except this returns (`pymarc.Field`, value)
@@ -183,7 +197,8 @@ def fieldgetter(*fieldspecs):
         ', '.join(fieldspecs))
     return fields
 
-class FatRecord(Record):
+
+class Record(pymarc.Record):
     """
     A record with some extras.
     """
@@ -196,14 +211,14 @@ class FatRecord(Record):
     E_INVALID_INDICATOR = "invalid indicator"
 
     def __init__(self, *args, **kwargs):
-        super(FatRecord, self).__init__(*args, **kwargs)
+        super(Record, self).__init__(*args, **kwargs)
 
     @classmethod
     def from_record(cls, record):
         """
         Factory methods to create FatRecord from pymarc.Record object.
         """
-        if not isinstance(record, Record):
+        if not isinstance(record, pymarc.Record):
             raise TypeError('record must be of type pymarc.Record')
         record.__class__ = FatRecord
         return record
@@ -213,7 +228,7 @@ class FatRecord(Record):
         Convert FatRecord to a pymarc.Record class. This is partially
         addressed in https://github.com/edsu/pymarc/pull/36.
         """
-        self.__class__ = Record
+        self.__class__ = pymarc.Record
         return self
 
     def add(self, tag, data=None, indicators=None, **kwargs):
@@ -224,15 +239,15 @@ class FatRecord(Record):
         """
         if data:
             if indicators:
-                raise ValueError(FatRecord.E_NO_INDICATORS)
+                raise ValueError(Record.E_NO_INDICATORS)
             if not tag.startswith('00'):
-                raise ValueError(FatRecord.E_NO_DATA)
+                raise ValueError(Record.E_NO_DATA)
         else:
             if tag.startswith('00'):
-                raise ValueError(FatRecord.E_EMPTY)
+                raise ValueError(Record.E_EMPTY)
 
         if tag.startswith('00') and kwargs:
-            raise ValueError(FatRecord.E_NO_SUBFIELDS)
+            raise ValueError(Record.E_NO_SUBFIELDS)
 
         if indicators is None:
             indicators = [' ', ' ']
@@ -240,13 +255,13 @@ class FatRecord(Record):
             if len(indicators) == 2:
                 indicators = [indicators[0], indicators[1]]
             else:
-                raise ValueError(FatRecord.E_INVALID_INDICATOR)
+                raise ValueError(Record.E_INVALID_INDICATOR)
 
         if data:  # == control field (001 -- 009)
-            field = Field(tag, data=data)
+            field = pymarc.Field(tag, data=data)
         else:     # == non-control field (010 -- 999)
             subfields = []
-            for key, value in kwargs.iteritems():
+            for key, value in kwargs.items():
                 key = key.replace('_', '')
                 if isinstance(value, basestring):
                     subfields += [key, value]
@@ -257,7 +272,7 @@ class FatRecord(Record):
                         subfields += [key, val]
                 else:
                     raise ValueError('subfield values must be strings')
-            field = Field(tag, indicators, subfields=subfields)
+            field = pymarc.Field(tag, indicators, subfields=subfields)
         self.add_field(field)
 
     def remove(self, fieldspec):
@@ -430,6 +445,9 @@ class FatRecord(Record):
         del d['leader']
         return [s for s in [v.strip() for v in flatten(d)] if s]
 
+FatRecord = Record
+
+
 def flatten(struct):
     """Cleates a flat list of all items in structured output (dicts, lists, items)
     Examples:
@@ -444,7 +462,7 @@ def flatten(struct):
         return []
     flat = []
     if isinstance(struct, dict):
-        for key, result in struct.iteritems():
+        for key, result in struct.items():
             flat += flatten(result)
         return flat
 
@@ -460,6 +478,7 @@ def flatten(struct):
         pass
 
     return [struct]
+
 
 class marcdoc(dict):
     """ A wrapper around an dictionary that represents a MARC record.
@@ -487,6 +506,7 @@ class marcdoc(dict):
         isbns = ', '.join(itertools.chain(md.x020a, md.x020z, md.x0209,
                                           md.x776z))
     """
+
     def __init__(self, document, default_prefix='_source', default_index='*'):
         warnings.warn("deprecated", DeprecationWarning)
         dict.__init__(self, document)
@@ -509,7 +529,7 @@ class marcdoc(dict):
             tag, code = tag[:3], tag[3:]
             return jpath.parse('{prefix}.content["{tag}"]'
                                '[{index}].["{code}"]'.format(prefix=prefix,
-                                tag=tag, index=index, code=code))
+                                                             tag=tag, index=index, code=code))
         else:
             return jpath.parse('{prefix}.content["{tag}"]'.format(prefix=prefix,
                                                                   tag=tag))

@@ -5,7 +5,9 @@ Tests for DotDict with ES marc.
 """
 
 import unittest
+
 import marcx
+
 
 class DotDictTest(unittest.TestCase):
 
