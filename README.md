@@ -29,7 +29,7 @@ Overview
 Iterate over field values quickly with `itervalues` and `iterfields`:
 
 ```python
->>> from urllib import urlopen
+>>> from urllib import urlopen # from urllib.request import urlopen
 >>> import marcx
 >>> record = marcx.Record(data=urlopen("http://goo.gl/lfJnw9").read())
 
@@ -84,8 +84,9 @@ False
 
 ----
 
-Add and remove fields with one line (control fields get `data`,
-non-control fields get subfields):
+Add and remove fields with one line (control fields get `data`, non-control
+fields get subfields via [keyword
+arguments](https://docs.python.org/3/tutorial/controlflow.html#keyword-arguments)):
 
 ```python
 >>> record = marcx.Record()
@@ -94,6 +95,11 @@ non-control fields get subfields):
 >>> record.add('020', a='020161622X')
 >>> record.remove('001')
 ```
+
+Note: *The order of the keyword arguments is not preserved* in Python 3.5 or
+earlier. However, Python 3.6 implemented [PEP 468: Preserving Keyword Argument
+Order](https://docs.python.org/3/whatsnew/3.6.html#whatsnew36-pep468) and
+therefore subfields actually will be added in the order they are specified.
 
 Add repeated subfields:
 
