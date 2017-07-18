@@ -55,28 +55,28 @@ NzYpMjYyMzU5Njc3HiAgH2JkcnVjax5ydh9hR0wgOTM0Nh9iU2VrdW5kYcyIcmxpdGVyYXR1ci4fMDIw
 MTU1OTQwNB4d""".replace("\n", ""))
 
 
-class FatRecordTests(unittest.TestCase):
+class RecordTests(unittest.TestCase):
 
     def test_init(self):
-        r = marcx.FatRecord()
+        r = marcx.Record()
         self.assertIsNotNone(r)
 
     def test_constructor(self):
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         self.assertIsNotNone(obj)
 
     def test_superclass(self):
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         self.assertTrue(isinstance(obj, pymarc.Record))
 
     def test_constructor_passes_data(self):
         # data='', to_unicode=False, force_utf8=False,
         # hide_utf8_warnings=False, utf8_handling='strict'
-        obj = marcx.FatRecord(data=MARCREC, to_unicode=True, force_utf8=True)
+        obj = marcx.Record(data=MARCREC, to_unicode=True, force_utf8=True)
         self.assertEquals(obj.as_marc(), MARCREC)
 
     def test_add_field_fast(self):
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         obj.add('980', a='81723')
         self.assertEqual(['81723'], obj['980'].get_subfields('a'))
 
@@ -86,14 +86,14 @@ class FatRecordTests(unittest.TestCase):
         self.assertEqual(['C'], obj['981'].get_subfields('c'))
 
     def test_add_indicator(self):
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         obj.add('980', a='81723', indicators=['0', ' '])
         self.assertEqual(['0', ' '], obj['980'].indicators)
         self.assertEqual('0', obj['980'].indicator1)
         self.assertEqual(' ', obj['980'].indicator2)
 
     def test_add_two_fields(self):
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         obj.add('041', a='ger', indicators=['0', ' '])
         obj.add('041', a='dt.', indicators=['0', '7'])
 
@@ -106,7 +106,7 @@ class FatRecordTests(unittest.TestCase):
                           [f.indicators for f in obj.get_fields('041')])
 
     def test_add_control_field(self):
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         obj.add('001', data='129')
         self.assertEqual('129', obj['001'].value())
 
@@ -117,7 +117,7 @@ class FatRecordTests(unittest.TestCase):
             obj.add('001', data='helo', c='hello')
 
     def test_accepts_strings_as_indicators(self):
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         obj.add('980', a='81723', indicators='0 ')
         self.assertEqual(['0', ' '], obj['980'].indicators)
         self.assertEqual('0', obj['980'].indicator1)
@@ -129,19 +129,19 @@ class FatRecordTests(unittest.TestCase):
         self.assertEqual('7', obj['981'].indicator2)
 
     def test_does_not_ignore_invalid_indicator_strings(self):
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         with self.assertRaises(ValueError):
             obj.add('980', a='81723', indicators='Welcome')
 
     def test_remove_single(self):
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         obj.add('001', data='123')
         self.assertEquals(1, len(obj.get_fields('001')))
         obj.remove('001')
         self.assertEquals(0, len(obj.get_fields('001')))
 
     def test_remove_all(self):
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         obj.add('001', data='123')
         obj.add('001', data='456')
         self.assertEquals(2, len(obj.get_fields('001')))
@@ -162,7 +162,7 @@ class FatRecordTests(unittest.TestCase):
         record.add_field(field)
 
         # w/ SlimRecord
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         obj.add('245',
                 a='The pragmatic programmer : ',
                 b='from journeyman to master /',
@@ -195,20 +195,20 @@ class FatRecordTests(unittest.TestCase):
         # )
 
     def test_get_first_value(self):
-        obj = marcx.FatRecord(data=MARCREC, to_unicode=True, force_utf8=True)
+        obj = marcx.Record(data=MARCREC, to_unicode=True, force_utf8=True)
         self.assertEquals(obj.firstvalue('041.a'), 'ger')
         self.assertEquals(obj.firstvalue('260.a'), 'Linz :')
         self.assertEquals(obj.firstvalue('999.9'), None)
         self.assertEquals(obj.firstvalue('999.9', default='X'), 'X')
 
     def test_get_first_many_values(self):
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         for i in range(100):
             obj.add('020', a='isbn-no-%s' % i)
         self.assertEquals(obj.firstvalue('020.a'), 'isbn-no-0')
 
     def test_remove_field_if(self):
-        obj = marcx.FatRecord(data=MARCREC, to_unicode=True, force_utf8=True)
+        obj = marcx.Record(data=MARCREC, to_unicode=True, force_utf8=True)
 
         removed = obj.remove_field_if('689.5', marcx._equals('DE-576'))
         self.assertEquals(len(removed), 1)
@@ -217,14 +217,14 @@ class FatRecordTests(unittest.TestCase):
         self.assertEquals(len(removed), 0)
 
     def test_remove_field_if_multiple_fields(self):
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
 
         # this is one field!
         obj.add('020', a='978123123', z='978123123')
         removed = obj.remove_field_if('020.a', '020.z', marcx._startswith('978'))
         self.assertEquals(len(removed), 1)
 
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         # this is one field!
         obj.add('020', a='978123123', z='978123123')
         removed = obj.remove_field_if('020.a', marcx._startswith('978'))
@@ -232,14 +232,14 @@ class FatRecordTests(unittest.TestCase):
         # no other field remains
         self.assertEquals(len(obj.get_fields()), 0)
 
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         # these are two fields!
         obj.add('020', a='978123123')
         obj.add('020', z='978123123')
         removed = obj.remove_field_if('020.a', '020.z', marcx._startswith('978'))
         self.assertEquals(len(removed), 2)
 
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         # these are three fields!
         obj.add('020', a='978123123')
         obj.add('020', z='978123123')
@@ -248,7 +248,7 @@ class FatRecordTests(unittest.TestCase):
         self.assertEquals(len(removed), 3)
 
     def test_add_digits_subfields_with_underscore(self):
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         obj.add('020', a='978123123', _9='Hello')
         self.assertEquals(
             obj.get_fields('020')[0].get_subfields('9'), ['Hello'])
@@ -258,7 +258,7 @@ class FatRecordTests(unittest.TestCase):
             ''' poor man's isbn validator '''
             return len(value) in (10, 13)
 
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         # these are three fields!
         obj.add('020', a='9783334444333')
         obj.add('020', a='978000')
@@ -274,7 +274,7 @@ class FatRecordTests(unittest.TestCase):
     def test_remove(self):
         """ test field or subfield removal """
 
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         obj.add('020', a='9783334444333')
         obj.add('020', a='978000')
         obj.add('020', z='9783330000333')
@@ -298,7 +298,7 @@ class FatRecordTests(unittest.TestCase):
         self.assertEquals(len(obj.get_fields()), 0)
 
     def test_remove_subfields(self):
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         obj.add('020', a='978000', b='123', c='123')
         obj.remove('020.a')
         obj.remove('020.b')
@@ -307,7 +307,7 @@ class FatRecordTests(unittest.TestCase):
         self.assertEquals(obj.get_fields('020'), [])
 
     def test_remove_cross_field_subfields(self):
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         obj.add('020', a='978000', b='123')
         obj.add('020', b='123', c='123')
 
@@ -324,7 +324,7 @@ class FatRecordTests(unittest.TestCase):
         self.assertEquals(obj.get_fields('020'), [])
 
     def test_itervalues(self):
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         obj.add('020', a='9783334444333')
         obj.add('020', a='978000')
         obj.add('020', z='9783330000333')
@@ -344,13 +344,13 @@ class FatRecordTests(unittest.TestCase):
         with self.assertRaises(AttributeError):
             record.itervalues('020')
 
-        obj = marcx.FatRecord.from_record(record)
+        obj = marcx.Record.from_record(record)
         self.assertEquals(obj.__class__.__name__, 'Record')
         self.assertEquals(obj.__dict__, record.__dict__)
         self.assertEquals(list(obj.itervalues('020')), ['123'])
 
     def test_to_record(self):
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         obj.add('020', a='9783334444333')
         obj.add('020', a='978000')
         obj.add('020', z='9783330000333')
@@ -364,24 +364,24 @@ class FatRecordTests(unittest.TestCase):
         self.assertEquals(record.get_fields('776')[0].value(), '978111')
 
     def test_add_repeated_subfields(self):
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         obj.add('020', a=('9783334444333', '1234'))
         self.assertEquals(len(obj.get_fields()), 1)
 
     def test_add_fails_on_non_string_non_iterables(self):
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         with self.assertRaises(ValueError):
             obj.add('020', a=1243)
 
     def test_has(self):
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         obj.add('020', a='1243')
         self.assertTrue(obj.has('020'))
         self.assertTrue(obj.has('020.a'))
         self.assertFalse(obj.has('020.b'))
 
     def test_flatten(self):
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         obj.add('020', a='1243')
         self.assertEquals(obj.flatten(), ['1243'])
         obj.add('020', b='Hello World')
@@ -393,6 +393,6 @@ class FatRecordTests(unittest.TestCase):
         """
         Flatten does not guarantee any order.
         """
-        obj = marcx.FatRecord()
+        obj = marcx.Record()
         obj.add('020', a='1', b='2', c='3', d='4', e='5', f='6')
         self.assertEquals(set(obj.flatten()), set(['1', '2', '3', '4', '5', '6']))

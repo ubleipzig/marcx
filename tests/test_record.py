@@ -9,7 +9,7 @@ from pymarc.exceptions import (BaseAddressInvalid, FieldNotFound,
 from pymarc.field import Field
 from pymarc.reader import MARCReader
 
-from marcx import FatRecord as Record
+from marcx import Record
 
 
 class RecordTest(unittest.TestCase):

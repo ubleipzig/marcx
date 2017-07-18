@@ -1,7 +1,7 @@
 README
 ======
 
-`marcx.FatRecord` is a small extension to
+`marcx.Record` is a small extension to
 [pymarc.Record](https://github.com/edsu/pymarc/blob/056cea129758c20068aec11a4cb148d65987d905/pymarc/record.py#L72),
 that adds a few shortcuts: `itervalues`, `test`, `add` and `remove`.
 

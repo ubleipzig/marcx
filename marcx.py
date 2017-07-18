@@ -114,9 +114,9 @@ def valuegetter(*fieldspecs, **kwargs):
 
     Example:
 
-    >>> from marcx import FatRecord, valuegetter
+    >>> from marcx import Record, valuegetter
     >>> from urllib import urlopen
-    >>> record = FatRecord(data=urlopen("http://goo.gl/lfJnw9").read())
+    >>> record = Record(data=urlopen("http://goo.gl/lfJnw9").read())
 
     In two steps:
 
@@ -141,7 +141,7 @@ def valuegetter(*fieldspecs, **kwargs):
     >>> set(valuegetter('002')(record))
     set([])
 
-    @see also: `FatRecord.itervalues`
+    @see also: `Record.itervalues`
     """
     combine_subfields = kwargs.get('combine_subfields', False)
     pattern = r'(?P<field>[^.]+)(.(?P<subfield>[^.]+))?'
@@ -216,16 +216,16 @@ class Record(pymarc.Record):
     @classmethod
     def from_record(cls, record):
         """
-        Factory methods to create FatRecord from pymarc.Record object.
+        Factory methods to create Record from pymarc.Record object.
         """
         if not isinstance(record, pymarc.Record):
             raise TypeError('record must be of type pymarc.Record')
-        record.__class__ = FatRecord
+        record.__class__ = Record
         return record
 
     def to_record(self):
         """
-        Convert FatRecord to a pymarc.Record class. This is partially
+        Convert Record to a pymarc.Record class. This is partially
         addressed in https://github.com/edsu/pymarc/pull/36.
         """
         self.__class__ = pymarc.Record
@@ -361,7 +361,7 @@ class Record(pymarc.Record):
         If there are multiple fields with the same tag,
         only the fields that match are removed, e.g.:
 
-        >>> record = FatRecord()
+        >>> record = Record()
         >>> record.add('020', a='97811111111')
         >>> record.add('020', a='11111111')
         >>> rmvd = record.remove_field_if('020.a', _startswith('978'))
