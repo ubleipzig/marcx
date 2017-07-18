@@ -10,6 +10,8 @@ Documentation and examples can be found under: https://github.com/ubleipzig/marc
 
 from setuptools import setup
 
+from marcx import __version__
+
 classifiers = """
 Development Status :: 4 - Beta
 Intended Audience :: Education
@@ -21,8 +23,9 @@ Programming Language :: Python :: 3
 Topic :: Text Processing :: General
 """
 
+
 setup(name='marcx',
-      version='0.2.1',
+      version=__version__,
       description='MARC record manipulation library based on pymarc',
       long_description=__doc__,
       classifiers=filter(None, classifiers.split('\n')),
