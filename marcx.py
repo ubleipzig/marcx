@@ -20,7 +20,7 @@ __version__ = '0.2.1'
 
 __all__ = [
     'Record',
-    'FatRecord',  # Deprecated, will be removed soon.
+    'FatRecord',  # Deprecated, use Record instead.
     'marcdoc',
     'valuegetter',
     'fieldgetter',
