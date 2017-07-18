@@ -15,8 +15,9 @@ Development Status :: 4 - Beta
 Intended Audience :: Education
 Intended Audience :: Developers
 Intended Audience :: Information Technology
-License :: OSI Approved :: MIT License
-Programming Language :: Python
+License :: OSI Approved :: GNU General Public License v3 (GPLv3)
+Programming Language :: Python :: 2
+Programming Language :: Python :: 3
 Topic :: Text Processing :: General
 """
 
