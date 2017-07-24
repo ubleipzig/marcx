@@ -212,6 +212,7 @@ class Record(pymarc.Record):
 
     def __init__(self, *args, **kwargs):
         super(Record, self).__init__(*args, **kwargs)
+        self.strict = True
 
     @classmethod
     def from_record(cls, record):
@@ -237,6 +238,9 @@ class Record(pymarc.Record):
 
         marc.add('020', a='0201657880', z='0201802398')
         """
+        if tag.startswith("00") and (data is None or data == "") and not bool(self.strict):
+            return
+
         if data:
             if indicators:
                 raise ValueError(Record.E_NO_INDICATORS)

@@ -396,3 +396,15 @@ class RecordTests(unittest.TestCase):
         obj = marcx.Record()
         obj.add('020', a='1', b='2', c='3', d='4', e='5', f='6')
         self.assertEquals(set(obj.flatten()), set(['1', '2', '3', '4', '5', '6']))
+
+    def test_add_strict_flag(self):
+        obj = marcx.Record()
+        obj.strict = True
+        with self.assertRaises(ValueError):
+            obj.add("007", data="")
+
+        obj = marcx.Record()
+        obj.strict = False
+        obj.add("001", data="")
+        obj.add("007", data="")
+        self.assertEquals(len(obj.get_fields()), 0)
