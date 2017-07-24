@@ -238,7 +238,7 @@ class Record(pymarc.Record):
 
         marc.add('020', a='0201657880', z='0201802398')
         """
-        if tag.startswith("00") and (data is None or data == "") and not bool(self.strict):
+        if tag.startswith("00") and (data is None or data == "") and not self.strict:
             return
 
         if data:
@@ -280,6 +280,13 @@ class Record(pymarc.Record):
                         subfields += [key, val]
                 else:
                     raise ValueError('subfield values must be strings')
+
+            if not any(subfields[1::2]):
+                if self.strict:
+                    raise ValueError('none of the subfields contains a value')
+                else:
+                    return
+
             field = pymarc.Field(tag, indicators, subfields=subfields)
         self.add_field(field)
 

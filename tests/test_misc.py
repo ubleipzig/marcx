@@ -399,7 +399,6 @@ class RecordTests(unittest.TestCase):
 
     def test_add_strict_flag(self):
         obj = marcx.Record()
-        obj.strict = True
         with self.assertRaises(ValueError):
             obj.add("007", data="")
 
@@ -408,3 +407,19 @@ class RecordTests(unittest.TestCase):
         obj.add("001", data="")
         obj.add("007", data="")
         self.assertEquals(len(obj.get_fields()), 0)
+
+    def test_add_many_empty_subfields(self):
+        obj = marcx.Record()
+        obj.strict = True
+        with self.assertRaises(ValueError):
+            obj.add("245", a="", b="", c="")
+
+        obj = marcx.Record()
+        obj.strict = False
+        obj.add("245", a="", b="", c="")
+        self.assertEquals(len(obj.get_fields()), 0)
+
+        obj = marcx.Record()
+        obj.strict = False
+        obj.add("245", a="", b="", c="x")
+        self.assertEquals(len(obj.get_fields()), 1)
