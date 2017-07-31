@@ -265,7 +265,8 @@ class Record(pymarc.Record):
             field = pymarc.Field(tag, data=data)
         else:     # == non-control field (010 -- 999)
             if 'subfields' in kwargs:
-                subfields = kwargs['subfields']
+                sfs = kwargs['subfields']
+                subfields = [v for sl in [(a, b) for a, b in zip(sfs[::2], sfs[1::2]) if b] for v in sl]
             else:
                 subfields = []
                 for key, value in kwargs.items():
@@ -284,11 +285,11 @@ class Record(pymarc.Record):
                     else:
                         raise ValueError('subfield values must be strings')
 
-                if not any(subfields[1::2]):
-                    if self.strict:
-                        raise ValueError('none of the subfields contains a value')
-                    else:
-                        return
+            if not any(subfields[1::2]):
+                if self.strict:
+                    raise ValueError('none of the subfields contains a value')
+                else:
+                    return
 
             field = pymarc.Field(tag, indicators, subfields=subfields)
         self.add_field(field)

@@ -432,3 +432,22 @@ class RecordTests(unittest.TestCase):
         self.assertEquals(obj.get_fields()[0].subfields[0], "a")
         self.assertEquals(obj.get_fields()[0].subfields[2], "b")
         self.assertEquals(obj.get_fields()[0].subfields[4], "c")
+
+    def test_ordered_subfields_via_kwarg_empty_values(self):
+        obj = marcx.Record()
+        obj.strict = True
+        obj.add("245", subfields=["a", "x", "b", ""])
+        self.assertEquals(len(obj.get_fields()), 1)
+        self.assertEquals(len(obj.get_fields()[0].subfields), 2)
+        self.assertEquals(obj.get_fields()[0].subfields[0], "a")
+        self.assertEquals(obj.get_fields()[0].subfields[1], "x")
+
+        obj = marcx.Record()
+        obj.strict = True
+        with self.assertRaises(ValueError):
+            obj.add("245", subfields=["a", "", "b", "", "c", ""])
+
+        obj = marcx.Record()
+        obj.strict = False
+        obj.add("245", subfields=["a", "", "b", "", "c", ])
+        self.assertEquals(len(obj.get_fields()), 0)
