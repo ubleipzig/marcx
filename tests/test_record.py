@@ -102,7 +102,7 @@ class RecordTest(unittest.TestCase):
         self.assertEquals(record.title(), None)
         record.add_field(Field('245', [0, 1],
                                subfields=['a', 'Foo :', 'b', 'bar']))
-        self.assertEquals(record.title(), 'Foo : bar')
+        self.assertEquals(record.title(), 'Foo :bar')
 
         record = Record()
         record.add_field(Field('245', [0, 1],
