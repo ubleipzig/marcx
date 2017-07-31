@@ -264,28 +264,31 @@ class Record(pymarc.Record):
         if data:  # == control field (001 -- 009)
             field = pymarc.Field(tag, data=data)
         else:     # == non-control field (010 -- 999)
-            subfields = []
-            for key, value in kwargs.items():
-                if value is None:
-                    continue
-                key = key.replace('_', '')
-                if isinstance(value, basestring):
-                    if value == "":
+            if 'subfields' in kwargs:
+                subfields = kwargs['subfields']
+            else:
+                subfields = []
+                for key, value in kwargs.items():
+                    if value is None:
                         continue
-                    subfields += [key, value]
-                elif isinstance(value, collections.Iterable):
-                    for val in value:
-                        if not isinstance(val, basestring):
-                            raise ValueError('subfield values must be strings')
-                        subfields += [key, val]
-                else:
-                    raise ValueError('subfield values must be strings')
+                    key = key.replace('_', '')
+                    if isinstance(value, basestring):
+                        if value == "":
+                            continue
+                        subfields += [key, value]
+                    elif isinstance(value, collections.Iterable):
+                        for val in value:
+                            if not isinstance(val, basestring):
+                                raise ValueError('subfield values must be strings')
+                            subfields += [key, val]
+                    else:
+                        raise ValueError('subfield values must be strings')
 
-            if not any(subfields[1::2]):
-                if self.strict:
-                    raise ValueError('none of the subfields contains a value')
-                else:
-                    return
+                if not any(subfields[1::2]):
+                    if self.strict:
+                        raise ValueError('none of the subfields contains a value')
+                    else:
+                        return
 
             field = pymarc.Field(tag, indicators, subfields=subfields)
         self.add_field(field)
