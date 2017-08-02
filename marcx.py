@@ -281,7 +281,8 @@ class Record(pymarc.Record):
                         for val in value:
                             if not isinstance(val, basestring):
                                 raise ValueError('subfield values must be strings')
-                            subfields += [key, val]
+                            if val:
+                                subfields += [key, val]
                     else:
                         raise ValueError('subfield values must be strings')
 

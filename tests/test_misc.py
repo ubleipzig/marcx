@@ -451,3 +451,12 @@ class RecordTests(unittest.TestCase):
         obj.strict = False
         obj.add("245", subfields=["a", "", "b", "", "c", ])
         self.assertEquals(len(obj.get_fields()), 0)
+
+    def test_repeated_subfield_empty_value_not_added(self):
+        obj = marcx.Record()
+        obj.strict = True
+        obj.add("245", a=["Hello", "", "X!"])
+        self.assertEquals(len(obj.get_fields()), 1)
+        self.assertEquals(len(obj.get_fields()[0].subfields), 4)
+        self.assertEquals(obj.get_fields()[0].subfields[0], "a")
+        self.assertEquals(obj.get_fields()[0].subfields[2], "a")
