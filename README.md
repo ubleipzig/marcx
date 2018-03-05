@@ -9,7 +9,7 @@ that adds a few shortcuts: `itervalues`, `test`, `add` and `remove`.
 [![pypi version](http://img.shields.io/pypi/v/marcx.svg?style=flat)](https://pypi.python.org/pypi/marcx)
 
 <!---
-[![PyPi version](https://pypip.in/v/marcx/badge.png)](https://crate.io/packages/marcx/)
+[![PyPi version](https://img.shields.io/pypi/v/marcx.svg)](https://crate.io/packages/marcx/)
 -->
 
 Since version 0.2.0, both Python 2 and 3 should be supported.
