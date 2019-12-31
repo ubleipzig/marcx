@@ -344,9 +344,16 @@ class Record(pymarc.Record):
         """
         return valuegetter(*fieldspecs, **kwargs)(self)
 
+    def values(self, *fieldspecs, **kwargs):
+        """
+        Turn generator from itervalues into list.
+        """
+        return list(self.itervalues(*fieldspecs, **kwargs))
+
     def iterfields(self, *fieldspecs):
         """
-        Shortcut for `fieldgetter(*fieldspecs)(self)`
+        Shortcut for `fieldgetter(*fieldspecs)(self)`; we do not add fields
+        methods, since that attribute is used already by pymarc.Record.
         """
         return fieldgetter(*fieldspecs)(self)
 
