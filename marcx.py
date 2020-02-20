@@ -357,6 +357,12 @@ class Record(pymarc.Record):
         """
         return fieldgetter(*fieldspecs)(self)
 
+    def contains(self, *fieldspecs, **kwargs):
+        """
+        Quickly check, if a field contains a given value.
+        """
+        raise NotImplementedError
+
     def remove_field_if(self, *args):
         """
         Remove a field from this record, if
