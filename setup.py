@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-""" 
+"""
 marcx consists mainly of a `pymarc.Record` subclass called `marcx.Record`,
 that implements a few extra methods, which should ease MARC library
 metadata manipulations.
@@ -10,7 +10,7 @@ Documentation and examples can be found under: https://github.com/ubleipzig/marc
 
 from setuptools import setup
 
-__version__ = '0.2.9'
+__version__ = '0.2.10'
 
 classifiers = """
 Development Status :: 4 - Beta
