@@ -10,7 +10,7 @@ Documentation and examples can be found under: https://github.com/ubleipzig/marc
 
 from setuptools import setup
 
-__version__ = '0.2.11'
+__version__ = '0.3.0'
 
 classifiers = """
 Development Status :: 4 - Beta
