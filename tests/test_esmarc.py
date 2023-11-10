@@ -7,6 +7,7 @@ Tests for ES marc.
 import unittest
 
 import marcx
+import warnings
 
 DOC_03692895X = {u'_id': u'03692895X',
  u'_index': u'bsz',
@@ -199,18 +200,20 @@ DOC_004867815 = {u'_id': u'004867815',
 class MarcDocTest(unittest.TestCase):
 
     def test_DOC_03692895X(self):
-        em = marcx.marcdoc(DOC_03692895X)
-        self.assertNotEquals(None, em)
-        self.assertEquals(em.x245a, [u'De hydrophobia nonnulla /'])
-        self.assertEquals(em.x245b, [])
-        self.assertEquals(em.x100a, [u'Nahmer, Friedrich Wilhelm V. D.'])
-        self.assertEquals(em.x700a, [])
-        self.assertEquals(list(em.isbns()), [])
+        with warnings.catch_warnings():
+            em = marcx.marcdoc(DOC_03692895X)
+        self.assertNotEqual(None, em)
+        self.assertEqual(em.x245a, [u'De hydrophobia nonnulla /'])
+        self.assertEqual(em.x245b, [])
+        self.assertEqual(em.x100a, [u'Nahmer, Friedrich Wilhelm V. D.'])
+        self.assertEqual(em.x700a, [])
+        self.assertEqual(list(em.isbns()), [])
 
     def test_DOC_091849799(self):
-        em = marcx.marcdoc(DOC_091849799)
-        self.assertNotEquals(None, em)
-        self.assertEquals(list(em.isbns()), [u'0262032937',
+        with warnings.catch_warnings():
+            em = marcx.marcdoc(DOC_091849799)
+        self.assertNotEqual(None, em)
+        self.assertEqual(list(em.isbns()), [u'0262032937',
                                              u'0070131511',
                                              u'0262531968',
                                              u'9780262032933',
@@ -219,25 +222,27 @@ class MarcDocTest(unittest.TestCase):
                                              u'0-262-53196-8',
                                              u'978-0-262-03293-3'])
 
-        self.assertEquals(em.x700a, [u'Cormen, Thomas H.'])
-        self.assertEquals(em.x935b, [u'druck'])
-        self.assertEquals(em.x650x, [u'Programming'])
-        self.assertEquals(em.x650x, [u'Programming'])
-        self.assertEquals(em.y650x, [u'Programming'])
-        self.assertEquals(em._650x, [u'Programming'])
-        self.assertEquals(em.x999, [])
-        self.assertEquals(em.x999yyyyy, [])
+        self.assertEqual(em.x700a, [u'Cormen, Thomas H.'])
+        self.assertEqual(em.x935b, [u'druck'])
+        self.assertEqual(em.x650x, [u'Programming'])
+        self.assertEqual(em.x650x, [u'Programming'])
+        self.assertEqual(em.y650x, [u'Programming'])
+        self.assertEqual(em._650x, [u'Programming'])
+        self.assertEqual(em.x999, [])
+        self.assertEqual(em.x999yyyyy, [])
 
     def test_dict_functionality(self):
-        em = marcx.marcdoc(DOC_091849799)
-        self.assertEquals('bsz', em.get('_index'))
-        self.assertEquals('091849799',
+        with warnings.catch_warnings():
+            em = marcx.marcdoc(DOC_091849799)
+        self.assertEqual('bsz', em.get('_index'))
+        self.assertEqual('091849799',
                           em.get('_source').get('content').get('001'))
 
     def test_flattened_689(self):
-        em = marcx.marcdoc(DOC_004867815)
-        self.assertEquals(5, len(em.x936k))
-        self.assertEquals(em.x936, [[{u'a': u'NH 6000', u'k': [
+        with warnings.catch_warnings():
+            em = marcx.marcdoc(DOC_004867815)
+        self.assertEqual(5, len(em.x936k))
+        self.assertEqual(em.x936, [[{u'a': u'NH 6000', u'k': [
             u'Geschichte',
             u'Griechisch-ro\u0308mische Geschichte',
             u'Griechische Geschichte',
@@ -247,25 +252,26 @@ class MarcDocTest(unittest.TestCase):
             u'ind1': u'r', u'ind2': u'v'}]])
 
     def test_values(self):
-        em = marcx.marcdoc(DOC_004867815)
-        self.assertEquals(5, len(em.values('936k')))
-        self.assertEquals(5, len(em.values('936.k')))
+        with warnings.catch_warnings():
+            em = marcx.marcdoc(DOC_004867815)
+        self.assertEqual(5, len(em.values('936k')))
+        self.assertEqual(5, len(em.values('936.k')))
 
-        self.assertEquals([u'Geschichte',
+        self.assertEqual([u'Geschichte',
                            u'Griechisch-ro\u0308mische Geschichte',
                            u'Griechische Geschichte',
                            u'Griechische Geschichte (500 - 338)',
                            u'Peloponnesischer Krieg und Niedergang der Polis (431 - 360)'],
                            em.values('936k'))
-        self.assertEquals([u'Geschichte',
+        self.assertEqual([u'Geschichte',
                            u'Griechisch-ro\u0308mische Geschichte',
                            u'Griechische Geschichte',
                            u'Griechische Geschichte (500 - 338)',
                            u'Peloponnesischer Krieg und Niedergang der Polis (431 - 360)'],
                            em.values('936.k'))
 
-        self.assertEquals(3, len(em.values('260.a', '260.b', '260.c')))
-        self.assertEquals([u'Athe\u0300nes [u.a.] :',
+        self.assertEqual(3, len(em.values('260.a', '260.b', '260.c')))
+        self.assertEqual([u'Athe\u0300nes [u.a.] :',
                            u"E\u0301cole Franc\u0327. d'Athe\u0300nes,",
                            u'1976'],
                            em.values('260.a', '260.b', '260.c'))

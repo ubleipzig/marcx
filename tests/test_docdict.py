@@ -19,9 +19,9 @@ class DotDictTest(unittest.TestCase):
         doc = {'a': 'A', 'b': 'B'}
         d = marcx.DotDict(doc)
         self.assertTrue('a' in d)
-        self.assertEquals(d.a, 'A')
+        self.assertEqual(d.a, 'A')
 
     def test_basics(self):
         doc = {'a': 'A', 'b': {'c': {'d': ['e', 'f']}}}
         d = marcx.DotDict(doc)
-        self.assertEquals(d.b.c.d[1], 'f')
+        self.assertEqual(d.b.c.d[1], 'f')
