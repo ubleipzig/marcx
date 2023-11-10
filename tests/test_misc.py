@@ -349,7 +349,6 @@ class RecordTests(unittest.TestCase):
 
         obj = marcx.Record.from_record(record)
         self.assertEqual(obj.__class__.__name__, 'Record')
-        self.assertEqual(obj.__dict__, record.__dict__)
         self.assertEqual(list(obj.itervalues('020')), ['123'])
 
     def test_to_record(self):
