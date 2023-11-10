@@ -6,7 +6,10 @@ Few extensions on `pymarc.Record` to make certain checks
 and manipulations a bit easier.
 """
 
-import collections
+try:
+    from collections.abc import Iterable  # noqa
+except ImportError:
+    from collections import Iterable  # noqa
 import itertools
 import re
 import warnings
@@ -292,7 +295,7 @@ class Record(pymarc.Record):
                         if value == "":
                             continue
                         subfields += [key, value]
-                    elif isinstance(value, collections.abc.Iterable):
+                    elif isinstance(value, Iterable):
                         for val in value:
                             if not isinstance(val, str):
                                 raise ValueError('subfield values must be strings')
