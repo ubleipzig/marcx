@@ -14,7 +14,6 @@ from builtins import zip
 
 import jsonpath_rw as jpath
 import pymarc
-from past.builtins import basestring
 
 __version__ = '0.2.11'
 
@@ -255,7 +254,7 @@ class Record(pymarc.Record):
 
         if indicators is None:
             indicators = [' ', ' ']
-        if isinstance(indicators, basestring):
+        if isinstance(indicators, str):
             if len(indicators) == 2:
                 indicators = [indicators[0], indicators[1]]
             else:
@@ -273,13 +272,13 @@ class Record(pymarc.Record):
                     if value is None:
                         continue
                     key = key.replace('_', '')
-                    if isinstance(value, basestring):
+                    if isinstance(value, str):
                         if value == "":
                             continue
                         subfields += [key, value]
-                    elif isinstance(value, collections.Iterable):
+                    elif isinstance(value, collections.abc.Iterable):
                         for val in value:
-                            if not isinstance(val, basestring):
+                            if not isinstance(val, str):
                                 raise ValueError('subfield values must be strings')
                             if val:
                                 subfields += [key, val]
@@ -407,11 +406,11 @@ class Record(pymarc.Record):
         for arg in args:
             if callable(arg):
                 function = arg
-            elif isinstance(arg, basestring):
+            elif isinstance(arg, str):
                 fieldspecs.add(arg)
             else:
                 raise ValueError('argument must be callable (test function) '
-                                 'or basestring (fieldspec, like 020 '
+                                 'or str (fieldspec, like 020 '
                                  'or 856.u, etc.)')
         removed = []
         for field, value in fieldgetter(*fieldspecs)(self):
@@ -447,11 +446,11 @@ class Record(pymarc.Record):
         for arg in args:
             if callable(arg):
                 function = arg
-            elif isinstance(arg, basestring):
+            elif isinstance(arg, str):
                 fieldspecs.add(arg)
             else:
                 raise ValueError('argument must be callable (test function) '
-                                 'or basestring (fieldspec, like 020.a '
+                                 'or str (fieldspec, like 020.a '
                                  'or 856.u, etc.)')
         if kwargs.get('all', False):
             return min(
@@ -499,7 +498,7 @@ def flatten(struct):
             flat += flatten(result)
         return flat
 
-    if isinstance(struct, basestring):
+    if isinstance(struct, str):
         return [struct]
 
     try:
