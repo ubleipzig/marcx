@@ -221,16 +221,26 @@ class Record(pymarc.Record):
         """
         if not isinstance(record, pymarc.Record):
             raise TypeError('record must be of type pymarc.Record')
-        record.__class__ = Record
-        return record
+        new_record = Record()
+        new_record.leader = record.leader
+        new_record.fields = record.fields
+        new_record.pos = record.pos
+        new_record.force_utf8 = record.force_utf8
+        new_record.to_unicode = record.to_unicode
+        return new_record
 
     def to_record(self):
         """
         Convert Record to a pymarc.Record class. This is partially
         addressed in https://github.com/edsu/pymarc/pull/36.
         """
-        self.__class__ = pymarc.Record
-        return self
+        record = pymarc.Record()
+        record.leader = self.leader
+        record.fields = self.fields
+        record.pos = self.pos
+        record.force_utf8 = self.force_utf8
+        record.to_unicode = self.to_unicode
+        return record
 
     def add(self, tag, data=None, indicators=None, **kwargs):
         """
