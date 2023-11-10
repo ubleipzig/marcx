@@ -162,8 +162,9 @@ def valuegetter(*fieldspecs, **kwargs):
                         if int(gd['field']) < 10:
                             yield field.value()
                         else:
-                            for value in field.subfields[1::2]:
-                                yield value
+                            for code, values in field.subfields_as_dict().items():
+                                for value in values:
+                                    yield value
     values.__doc__ = 'returns a value generator over %s' % (
         ', '.join(fieldspecs))
     return values
