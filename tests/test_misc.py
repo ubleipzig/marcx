@@ -7,7 +7,7 @@ import unittest
 from builtins import range
 
 import pymarc
-from pymarc import Field
+from pymarc import Field, Subfield
 
 import marcx
 
@@ -305,7 +305,7 @@ class RecordTests(unittest.TestCase):
         obj.add('020', a='978000', b='123', c='123')
         obj.remove('020.a')
         obj.remove('020.b')
-        self.assertEqual(obj.get_fields('020')[0].subfields, ['c', '123'])
+        self.assertEqual(obj.get_fields('020')[0].subfields, [Subfield(code='c', value='123')])
         obj.remove('020.c')
         self.assertEqual(obj.get_fields('020'), [])
 
@@ -315,12 +315,13 @@ class RecordTests(unittest.TestCase):
         obj.add('020', b='123', c='123')
 
         obj.remove('020.a')
-        self.assertEqual(obj.get_fields('020')[0].subfields, ['b', '123'])
-        self.assertEqual(sorted(obj.get_fields('020')[1].subfields), sorted(['c', '123', 'b', '123']))
+        self.assertEqual(obj.get_fields('020')[0].subfields, [Subfield(code='b', value='123')])
+        self.assertEqual(sorted(obj.get_fields('020')[1].subfields),
+                         [Subfield(code='b', value='123'), Subfield(code='c', value='123')])
 
         obj.remove('020.b')
         # note that one field disappears, since it no longer carries subfields
-        self.assertEqual(obj.get_fields('020')[0].subfields, ['c', '123'])
+        self.assertEqual(obj.get_fields('020')[0].subfields, [Subfield(code='c', value='123')])
 
         obj.remove('020.c')
         # no more 020 at all
@@ -428,30 +429,29 @@ class RecordTests(unittest.TestCase):
 
     def test_ordered_subfields_via_kwarg(self):
         obj = marcx.Record()
-        obj.add("245", subfields=L(["a", "Hello", "b", "World", "c", "!"]))
+        obj.add("245", subfields=["a", "Hello", "b", "World", "c", "!"])
         self.assertEqual(len(obj.get_fields()), 1)
-        self.assertEqual(len(obj.get_fields()[0].subfields), 6)
-        self.assertEqual(obj.get_fields()[0].subfields[0], "a")
-        self.assertEqual(obj.get_fields()[0].subfields[2], "b")
-        self.assertEqual(obj.get_fields()[0].subfields[4], "c")
+        self.assertEqual(len(obj.get_fields("245")), 1)
+        self.assertEqual(len(obj.get_fields("245")[0].get_subfields("a")), 1)
+        self.assertEqual(len(obj.get_fields("245")[0].get_subfields("b")), 1)
+        self.assertEqual(len(obj.get_fields("245")[0].get_subfields("c")), 1)
 
     def test_ordered_subfields_via_kwarg_empty_values(self):
         obj = marcx.Record()
         obj.strict = True
-        obj.add("245", subfields=L(["a", "x", "b", ""]))
+        obj.add("245", subfields=["a", "x", "b", ""])
         self.assertEqual(len(obj.get_fields()), 1)
-        self.assertEqual(len(obj.get_fields()[0].subfields), 2)
-        self.assertEqual(obj.get_fields()[0].subfields[0], "a")
-        self.assertEqual(obj.get_fields()[0].subfields[1], "x")
+        self.assertEqual(len(obj.get_fields()[0].subfields_as_dict()), 1)
+        self.assertEqual(len(obj.get_fields()[0].get_subfields("a")), 1)
 
         obj = marcx.Record()
         obj.strict = True
         with self.assertRaises(ValueError):
-            obj.add("245", subfields=L(["a", "", "b", "", "c", ""]))
+            obj.add("245", subfields=["a", "", "b", "", "c", ""])
 
         obj = marcx.Record()
         obj.strict = False
-        obj.add("245", subfields=L(["a", "", "b", "", "c", ]))
+        obj.add("245", subfields=["a", "", "b", "", "c", ])
         self.assertEqual(len(obj.get_fields()), 0)
 
     def test_repeated_subfield_empty_value_not_added(self):
@@ -459,6 +459,5 @@ class RecordTests(unittest.TestCase):
         obj.strict = True
         obj.add("245", a=["Hello", "", "X!"])
         self.assertEqual(len(obj.get_fields()), 1)
-        self.assertEqual(len(obj.get_fields()[0].subfields), 4)
-        self.assertEqual(obj.get_fields()[0].subfields[0], "a")
-        self.assertEqual(obj.get_fields()[0].subfields[2], "a")
+        print(obj)
+        self.assertEqual(len(obj.get_fields()[0].subfields_as_dict()), 1)

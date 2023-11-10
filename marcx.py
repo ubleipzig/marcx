@@ -227,6 +227,7 @@ class Record(pymarc.Record):
         new_record.pos = record.pos
         new_record.force_utf8 = record.force_utf8
         new_record.to_unicode = record.to_unicode
+        new_record.strict = True
         return new_record
 
     def to_record(self):
@@ -276,6 +277,10 @@ class Record(pymarc.Record):
         else:     # == non-control field (010 -- 999)
             if 'subfields' in kwargs:
                 sfs = kwargs['subfields']
+                if len(sfs) > 0 and not isinstance(sfs[0], str):
+                    # TODO: this is just a workaround, do not use legacy
+                    # internal format any more.
+                    subfields = list(itertools.chain.from_iterable([(f.code, f.value) for f in sfs]))
                 subfields = [v for sl in [(a, b) for a, b in zip(sfs[::2], sfs[1::2]) if b] for v in sl]
             else:
                 subfields = []
@@ -325,7 +330,11 @@ class Record(pymarc.Record):
         for field in self.get_fields(grp['field']):
             if grp['subfield']:
                 updated = []
-                for code, value in pairwise(field.subfields):
+                legacy = []
+                for f in field.subfields:
+                    legacy.append(f.code)
+                    legacy.append(f.value)
+                for code, value in pairwise(legacy):
                     if not code == grp['subfield']:
                         updated += [code, value]
                 # if we removed the last subfield entry,
