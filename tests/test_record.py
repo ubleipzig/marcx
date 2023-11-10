@@ -39,7 +39,8 @@ class RecordTest(unittest.TestCase):
 
         # try removing a field that exists
         record.remove_field(field)
-        self.assertEqual(record['245'], None)
+        with self.assertRaises(KeyError):
+            record['245']
 
         # try removing a field that doesn't exist
         field = Field('001', data='abcd1234')
@@ -53,7 +54,8 @@ class RecordTest(unittest.TestCase):
             subfields=L(['a', 'Python', 'c', 'Guido']))
         record.add_field(title)
         self.assertEqual(record['245'], title, 'short access')
-        self.assertEqual(record['999'], None, 'short access with no field')
+        with self.assertRaises(KeyError):
+            record['999']
 
     def test_field_not_found(self):
         record = Record()
