@@ -7,9 +7,12 @@ import unittest
 from builtins import range
 
 import pymarc
+from pymarc import Field
 
 import marcx
 
+# helper, shortcut
+L = pymarc.field.Field.convert_legacy_subfields
 
 # 00909cas a2200265   4500
 # 001 000119652
@@ -37,22 +40,22 @@ import marcx
 # 935    $b druck
 # 936 rv $a GL 9346 $b Sekundärliteratur. $0 201559404
 MARCREC = base64.b64decode("""
-MDA5MDljYXMgYTIyMDAyNjUgICA0NTAwMDAxMDAxMDAwMDAwMDAzMDAwNzAwMDEwMDA1MDAxNzAwMDE3
-MDA3MDAwMzAwMDM0MDA4MDA0MTAwMDM3MDE2MDAyMTAwMDc4MDM1MDAyNTAwMDk5MDQwMDAzMTAwMTI0
-MDQxMDAwODAwMTU1MDQxMDAwODAwMTYzMDg0MDAxNzAwMTcxMTEwMDEwNDAwMTg4MjQ1MDA3OTAwMjky
-MjYwMDAzNzAwMzcxNTkxMDAyODAwNDA4Njg5MDA2ODAwNDM2Njg5MDAxMTAwNTA0Nzg1MDA3MzAwNTE1
-OTM1MDAxMDAwNTg4OTM2MDA0NTAwNTk4HjAwMDExOTY1Mh5ERS01NzYeMjAxMjA2MTUwODQ1MjAuMB50
-dR44NTAxMDFjMTl1dXV1dXV4eCAgICBtICAgICAgICAgICAgMGdlciBjHiAgH2EoT0NvTEMpMzA5OTIy
-NzgxHiAgH2EoREUtNTk5KUJTWjAwMDExOTY1Mh4gIB9hREUtNTc2H2JnZXIfY0RFLTU3Nh9lcmFrd2Ie
-MCAfYWdlch4wNx9hZHQuHiAgH2FHTCA5MzQ2HzJydmseMiAfYUFkYWxiZXJ0LVN0aWZ0ZXItSW5zdGl0
-dXQgZGVzIExhbmRlcyBPYmVyb8yIc3RlcnJlaWNoHzlnOkxpbnofMChERS01ODgpMjAwMzYwNC04HzAo
-REUtNTc2KTE5MTU5NDI3WB4xMB9hU2NocmlmdGVucmVpaGUgZGVzIEFkYWxiZXJ0LVN0aWZ0ZXItSW5z
-dGl0dXRlcyBkZXMgTGFuZGVzIE9iZXJvzIhzdGVycmVpY2geICAfYUxpbnogOh9iT2Jlcm9lc3RlcnIu
-IExhbmRlc3ZlcmwuHiAgH2E1MDkwLCA1NTUwOiBGUlVCMTEvU3JlZB4wMB9EcB8wKERFLTU4OCkxMTg2
-MTgxNTYfMChERS01NzYpMTYzMjAwNTgwHzJnbmQfYVN0aWZ0ZXIsIEFkYWxiZXJ0HjAgHzVERS01NzYe
-MDAfaUFiIEJkLiA0MiB1LmQuVC4fdEJlaXRyYcyIZ2UgenVyIFN0aWZ0ZXJmb3JzY2h1bmcfdyhERS01
-NzYpMjYyMzU5Njc3HiAgH2JkcnVjax5ydh9hR0wgOTM0Nh9iU2VrdW5kYcyIcmxpdGVyYXR1ci4fMDIw
-MTU1OTQwNB4d""".replace("\n", ""))
+                           MDA5MDljYXMgYTIyMDAyNjUgICA0NTAwMDAxMDAxMDAwMDAwMDAzMDAwNzAwMDEwMDA1MDAxNzAwMDE3
+                           MDA3MDAwMzAwMDM0MDA4MDA0MTAwMDM3MDE2MDAyMTAwMDc4MDM1MDAyNTAwMDk5MDQwMDAzMTAwMTI0
+                           MDQxMDAwODAwMTU1MDQxMDAwODAwMTYzMDg0MDAxNzAwMTcxMTEwMDEwNDAwMTg4MjQ1MDA3OTAwMjky
+                           MjYwMDAzNzAwMzcxNTkxMDAyODAwNDA4Njg5MDA2ODAwNDM2Njg5MDAxMTAwNTA0Nzg1MDA3MzAwNTE1
+                           OTM1MDAxMDAwNTg4OTM2MDA0NTAwNTk4HjAwMDExOTY1Mh5ERS01NzYeMjAxMjA2MTUwODQ1MjAuMB50
+                           dR44NTAxMDFjMTl1dXV1dXV4eCAgICBtICAgICAgICAgICAgMGdlciBjHiAgH2EoT0NvTEMpMzA5OTIy
+                           NzgxHiAgH2EoREUtNTk5KUJTWjAwMDExOTY1Mh4gIB9hREUtNTc2H2JnZXIfY0RFLTU3Nh9lcmFrd2Ie
+                           MCAfYWdlch4wNx9hZHQuHiAgH2FHTCA5MzQ2HzJydmseMiAfYUFkYWxiZXJ0LVN0aWZ0ZXItSW5zdGl0
+                           dXQgZGVzIExhbmRlcyBPYmVyb8yIc3RlcnJlaWNoHzlnOkxpbnofMChERS01ODgpMjAwMzYwNC04HzAo
+                           REUtNTc2KTE5MTU5NDI3WB4xMB9hU2NocmlmdGVucmVpaGUgZGVzIEFkYWxiZXJ0LVN0aWZ0ZXItSW5z
+                           dGl0dXRlcyBkZXMgTGFuZGVzIE9iZXJvzIhzdGVycmVpY2geICAfYUxpbnogOh9iT2Jlcm9lc3RlcnIu
+                           IExhbmRlc3ZlcmwuHiAgH2E1MDkwLCA1NTUwOiBGUlVCMTEvU3JlZB4wMB9EcB8wKERFLTU4OCkxMTg2
+                           MTgxNTYfMChERS01NzYpMTYzMjAwNTgwHzJnbmQfYVN0aWZ0ZXIsIEFkYWxiZXJ0HjAgHzVERS01NzYe
+                           MDAfaUFiIEJkLiA0MiB1LmQuVC4fdEJlaXRyYcyIZ2UgenVyIFN0aWZ0ZXJmb3JzY2h1bmcfdyhERS01
+                           NzYpMjYyMzU5Njc3HiAgH2JkcnVjax5ydh9hR0wgOTM0Nh9iU2VrdW5kYcyIcmxpdGVyYXR1ci4fMDIw
+                           MTU1OTQwNB4d""".replace("\n", ""))
 
 
 class RecordTests(unittest.TestCase):
@@ -100,10 +103,10 @@ class RecordTests(unittest.TestCase):
         self.assertEqual(2, len(obj.get_fields('041')))
         self.assertEqual(['ger'], obj['041'].get_subfields('a'))
         self.assertEqual(['ger', 'dt.'],
-                          [f['a'] for f in obj.get_fields('041')])
+                         [f['a'] for f in obj.get_fields('041')])
 
         self.assertEqual([['0', ' '], ['0', '7']],
-                          [f.indicators for f in obj.get_fields('041')])
+                         [f.indicators for f in obj.get_fields('041')])
 
     def test_add_control_field(self):
         obj = marcx.Record()
@@ -151,14 +154,14 @@ class RecordTests(unittest.TestCase):
     def test_vs_slim_vs_record(self):
         # w/ Record
         record = pymarc.Record()
-        field = pymarc.Field(
+        field = pymarc.field.Field(
             tag='245',
             indicators=['0', '1'],
-            subfields=[
+            subfields=L([
                 'a', 'The pragmatic programmer : ',
                 'b', 'from journeyman to master /',
                 'c', 'Andrew Hunt, David Thomas.'
-            ])
+            ]))
         record.add_field(field)
 
         # w/ SlimRecord
@@ -338,8 +341,8 @@ class RecordTests(unittest.TestCase):
 
     def test_from_record(self):
         record = pymarc.Record()
-        record.add_field(pymarc.Field('001', data='123'))
-        record.add_field(pymarc.Field('020', [' ', ' '], subfields=['a', '123']))
+        record.add_field(pymarc.field.Field('001', data='123'))
+        record.add_field(pymarc.field.Field('020', [' ', ' '], subfields=L(['a', '123'])))
 
         with self.assertRaises(AttributeError):
             record.itervalues('020')
@@ -426,7 +429,7 @@ class RecordTests(unittest.TestCase):
 
     def test_ordered_subfields_via_kwarg(self):
         obj = marcx.Record()
-        obj.add("245", subfields=["a", "Hello", "b", "World", "c", "!"])
+        obj.add("245", subfields=L(["a", "Hello", "b", "World", "c", "!"]))
         self.assertEqual(len(obj.get_fields()), 1)
         self.assertEqual(len(obj.get_fields()[0].subfields), 6)
         self.assertEqual(obj.get_fields()[0].subfields[0], "a")
@@ -436,7 +439,7 @@ class RecordTests(unittest.TestCase):
     def test_ordered_subfields_via_kwarg_empty_values(self):
         obj = marcx.Record()
         obj.strict = True
-        obj.add("245", subfields=["a", "x", "b", ""])
+        obj.add("245", subfields=L(["a", "x", "b", ""]))
         self.assertEqual(len(obj.get_fields()), 1)
         self.assertEqual(len(obj.get_fields()[0].subfields), 2)
         self.assertEqual(obj.get_fields()[0].subfields[0], "a")
@@ -445,11 +448,11 @@ class RecordTests(unittest.TestCase):
         obj = marcx.Record()
         obj.strict = True
         with self.assertRaises(ValueError):
-            obj.add("245", subfields=["a", "", "b", "", "c", ""])
+            obj.add("245", subfields=L(["a", "", "b", "", "c", ""]))
 
         obj = marcx.Record()
         obj.strict = False
-        obj.add("245", subfields=["a", "", "b", "", "c", ])
+        obj.add("245", subfields=L(["a", "", "b", "", "c", ]))
         self.assertEqual(len(obj.get_fields()), 0)
 
     def test_repeated_subfield_empty_value_not_added(self):

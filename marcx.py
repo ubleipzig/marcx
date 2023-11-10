@@ -261,7 +261,7 @@ class Record(pymarc.Record):
                 raise ValueError(Record.E_INVALID_INDICATOR)
 
         if data:  # == control field (001 -- 009)
-            field = pymarc.Field(tag, data=data)
+            field = pymarc.field.Field(tag, data=data)
         else:     # == non-control field (010 -- 999)
             if 'subfields' in kwargs:
                 sfs = kwargs['subfields']
@@ -292,9 +292,9 @@ class Record(pymarc.Record):
                     return
             # pymarc 5 compat
             # https://pymarc.readthedocs.io/en/latest/index.html#pymarc.field.Field.convert_legacy_subfields
-            subfields = Field.convert_legacy_subfield(subfields)
+            subfields = pymarc.field.Field.convert_legacy_subfields(subfields)
 
-            field = pymarc.Field(tag, indicators, subfields=subfields)
+            field = pymarc.field.Field(tag, indicators, subfields=subfields)
         self.add_field(field)
 
     def remove(self, fieldspec):
@@ -322,7 +322,7 @@ class Record(pymarc.Record):
                 if not updated:
                     self.remove_field(field)
                 else:
-                    field.subfields = updated
+                    field.subfields = pymarc.field.Field.convert_legacy_subfields(updated)
             else:
                 # it is a control field
                 self.remove_field(field)
