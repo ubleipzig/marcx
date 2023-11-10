@@ -290,6 +290,9 @@ class Record(pymarc.Record):
                     raise ValueError('none of the subfields contains a value')
                 else:
                     return
+            # pymarc 5 compat
+            # https://pymarc.readthedocs.io/en/latest/index.html#pymarc.field.Field.convert_legacy_subfields
+            subfields = Field.convert_legacy_subfield(subfields)
 
             field = pymarc.Field(tag, indicators, subfields=subfields)
         self.add_field(field)
