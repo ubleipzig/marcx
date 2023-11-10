@@ -5,14 +5,18 @@ README
 [pymarc.Record](https://github.com/edsu/pymarc/blob/056cea129758c20068aec11a4cb148d65987d905/pymarc/record.py#L72),
 that adds a few shortcuts: `itervalues`, `test`, `add` and `remove`.
 
-[![Build Status](http://img.shields.io/travis/ubleipzig/marcx.svg?style=flat)](https://travis-ci.org/ubleipzig/marcx)
 [![pypi version](http://img.shields.io/pypi/v/marcx.svg?style=flat)](https://pypi.python.org/pypi/marcx)
 
 <!---
 [![PyPi version](https://img.shields.io/pypi/v/marcx.svg)](https://crate.io/packages/marcx/)
 -->
 
-Since version 0.2.0, both Python 2 and 3 should be supported.
+Compatibility Notes
+-------------------
+
+* marcx 0.3.0 is **only compatible with pymarc 5** or higher; if for some reason you need the older pymarc, you will need to fix the versions for both marcx and pymarc, e.g. `pymarc==4.2.2` and `marcx==0.2.12`
+* since version 0.2.0, both Python 2 and 3 should be supported
+
 
 Installation
 ------------
